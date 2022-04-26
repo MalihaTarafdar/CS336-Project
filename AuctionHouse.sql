@@ -13,13 +13,62 @@ USE `AuctionHouse`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `Users` (
   `username` varchar(50) PRIMARY KEY,
   `password` varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE TABLE IF NOT EXISTS `Auction` (
+	`auctionId` int PRIMARY KEY,
+    `minPrice` float,
+    `initialPrice` float,
+    `bidIncrement` float,
+    `closeDateTime` datetime
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Auction` (
+	`auctionId` int PRIMARY KEY,
+    `minPrice` float,
+    `initialPrice` float,
+    `bidIncrement` float,
+    `closeDateTime` datetime
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Item` (
+	`itemId` int PRIMARY KEY,
+    `name` varchar(50)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Category` (
+	`name` varchar(25) PRIMARY KEY
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Sells` (
+	`username` varchar(50),
+    `auctionId` int,
+    PRIMARY KEY(`username`, `auctionId`),
+    FOREIGN KEY(`username`) references `Users`(`username`),
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Bids` (
+	`amount` float,
+    `upperLimit` float,
+    `username` varchar(50),
+    `auctionId` int,
+    PRIMARY KEY(`username`, `auctionId`),
+    FOREIGN KEY(`username`) references `Users`(`username`),
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Buys` (
+    `username` varchar(50),
+    `auctionId` int,
+    `price` float,
+    PRIMARY KEY(`username`, `auctionId`),
+    FOREIGN KEY(`username`) references `Users`(`username`),
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
