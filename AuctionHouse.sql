@@ -26,21 +26,26 @@ CREATE TABLE IF NOT EXISTS `Auction` (
     `closeDateTime` datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `Auction` (
-	`auctionId` int PRIMARY KEY,
-    `minPrice` float,
-    `initialPrice` float,
-    `bidIncrement` float,
-    `closeDateTime` datetime
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS `Item` (
 	`itemId` int PRIMARY KEY,
     `name` varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `Category` (
-	`name` varchar(25) PRIMARY KEY
+CREATE TABLE IF NOT EXISTS `Electronics` (
+	`serialNumber` int PRIMARY KEY,
+    `brand`  varchar(50),
+    `model` varchar(50),
+    `year` int,
+    `wireless` bool,
+    `powerSupply` varchar(50),
+    `cpu`  varchar(50),
+    `gpu`  varchar(50),
+    `ram`  varchar(50),
+    `screenSize` float,
+    `touchScreen` bool,
+    `camera`  varchar(50),
+    `storage` int,
+    `chip`  varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Sells` (
