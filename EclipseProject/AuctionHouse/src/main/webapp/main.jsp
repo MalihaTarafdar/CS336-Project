@@ -18,9 +18,11 @@
 	<%} else {
 	%>
 	Welcome <%=session.getAttribute("user")%>
+	<a href='deleteUser.jsp'>Delete User</a>
 	<a href='logout.jsp'>Log out</a>
 	<%
 	    }
 	%>
+	
 </body>
 </html>
