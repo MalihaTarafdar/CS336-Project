@@ -9,17 +9,15 @@
 	<title>Login | AuctionHouse</title>
 </head>
 <body>
-	Login<br>
+	Welcome to AuctionHouse!
+	<br/>
+	Login or register:
 	
-	<form method="POST" action="login.jsp">
-		Username: <input type="text" name="username"/> <br/>
-    	Password: <input type="password" name="password"/> <br/>
-       <input type="submit"  value="Login"/>
-	</form>
-	<form method="POST" action="register.jsp">
-		Username: <input type="text" name="username"/> <br/>
-   		Password: <input type="password" name="password"/> <br/>
-		<input type="submit" value="Register"/>
+	<form method="POST" action="loginRegister.jsp">
+		Username: <input type="text" name="username"/><br/>
+    	Password: <input type="password" name="password"/><br/>
+       <input type="submit" name="login" value="Login"/>
+       <input type="submit" name="register" value="Register"/>
 	</form>
 
 </body>

@@ -9,12 +9,11 @@
 	<title>AuctionHouse</title>
 </head>
 <body>
-	Login successful!
 	<%
     if (session.getAttribute("user") == null) {
 	%>
 		You are not logged in<br/>
-		<a href="index">Please Login</a>
+		<a href="index.jsp">Please Login</a>
 	<%} else {
 	%>
 		Welcome <%=session.getAttribute("user")%><br>
@@ -29,7 +28,7 @@
 			<input type="submit" value="Add Auction"/>
 		</form>
 		
-		<a href='deleteUser.jsp'>Delete User</a>
+		<a href='deleteUser.jsp'>Delete Account</a>
 		<a href='logout.jsp'>Log out</a>
 	<%
 	}
