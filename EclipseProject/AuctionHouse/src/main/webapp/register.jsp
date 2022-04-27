@@ -5,35 +5,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>AuctionHouse</title>
+	<meta charset="ISO-8859-1">
+	<title>Register | AuctionHouse</title>
 </head>
 <body>
 	
 <%
+	//get credentials
     String username = request.getParameter("username");   
     String password = request.getParameter("password");
     
-    
-    
     Class.forName("com.mysql.jdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
-    PreparedStatement stmt = con.prepareStatement("INSERT INTO Users(username, password) VALUES (?, ?)");
     
+    //check if username exists
     Statement st = con.createStatement();
-    ResultSet rs;
-    rs = st.executeQuery("select * from users where username='" + username + "' and password='" + password + "'");
-    if (!rs.next()) {
-        //st.executeQuery("INSERT INTO Users(username, password) VALUES (" + username + "," + password + ")");
-        stmt.setString(1, username);
-        stmt.setString(2, password);
-        stmt.executeUpdate();
+    ResultSet rs = st.executeQuery("select * from users where username='" + username + "'");
+    if (!rs.next()) { //does not exist
+    	//create user
+        PreparedStatement pst = con.prepareStatement("INSERT INTO Users(username, password) VALUES (?, ?)");
+        pst.setString(1, username);
+        pst.setString(2, password);
+        pst.executeUpdate();
                
-    	session.setAttribute("user", username); // the username will be stored in the session
-        out.println("welcome " + username);
-        out.println("<a href='logout.jsp'>Log out</a>");
+    	session.setAttribute("user", username); //the username will be stored in the session
         response.sendRedirect("main.jsp");
-    } else {
+    } else { //exists
         out.println("Account already exists <a href='index.jsp'>try again</a>");
     }
 %>

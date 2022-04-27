@@ -11,31 +11,28 @@
 <body>
 	Login successful!
 	<%
-    if ((session.getAttribute("user") == null)) {
+    if (session.getAttribute("user") == null) {
 	%>
-	You are not logged in<br/>
-	<a href="index">Please Login</a>
+		You are not logged in<br/>
+		<a href="index">Please Login</a>
 	<%} else {
 	%>
-	Welcome <%=session.getAttribute("user")%><br>
-	
-	
-	<label for="electronic">Choose type of electronic:</label>
-	<form method="POST" action="addAuction.jsp">
-		<select name="electronic" id="type">
-		  <option value="PC">PC</option>
-		  <option value="Laptop/Tablet">Laptop/Tablet</option>
-		  <option value="Phone">Phone</option>
-		</select>
-		<input type="submit" value="Add Auction"/>
-	</form>
-	
-	
-	
-	<a href='deleteUser.jsp'>Delete User</a>
-	<a href='logout.jsp'>Log out</a>
+		Welcome <%=session.getAttribute("user")%><br>
+		
+		<label for="electronic">Choose type of electronic:</label>
+		<form method="POST" action="addAuction.jsp">
+			<select name="electronic" id="type">
+			  <option value="PC">PC</option>
+			  <option value="Laptop/Tablet">Laptop/Tablet</option>
+			  <option value="Phone">Phone</option>
+			</select>
+			<input type="submit" value="Add Auction"/>
+		</form>
+		
+		<a href='deleteUser.jsp'>Delete User</a>
+		<a href='logout.jsp'>Log out</a>
 	<%
-	    }
+	}
 	%>
 	
 </body>

@@ -5,13 +5,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Logout | AuctionHouse</title>
+	<meta charset="ISO-8859-1">
+	<title>Logout | AuctionHouse</title>
 </head>
 <body>
 	<%
 	session.invalidate();
-	// session.getAttribute("user");   this will throw an error
 	response.sendRedirect("index.jsp");
 	%>
 </body>

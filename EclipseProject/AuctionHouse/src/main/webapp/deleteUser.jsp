@@ -10,19 +10,13 @@
 </head>
 <body>
 	<%
-	
-	
 	Class.forName("com.mysql.jdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
-	PreparedStatement stmt = con.prepareStatement("delete FROM Users WHERE username=?");
-	stmt.setString(1, session.getAttribute("user").toString());
-	stmt.executeUpdate();
-	
-	
-	
+	PreparedStatement pst = con.prepareStatement("DELETE FROM Users WHERE username=?");
+	pst.setString(1, session.getAttribute("user").toString());
+	pst.executeUpdate();
 	
 	session.invalidate();
-	// session.getAttribute("user");   this will throw an error	
 	response.sendRedirect("index.jsp");
 	%>
 </body>

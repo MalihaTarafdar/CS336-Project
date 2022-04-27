@@ -5,27 +5,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>AuctionHouse</title>
+	<meta charset="ISO-8859-1">
+	<title>Login | AuctionHouse</title>
 </head>
 <body>
 	
 <%
+	//get credentials
     String username = request.getParameter("username");   
     String password = request.getParameter("password");
     
+    //check if credentials are correct
     Class.forName("com.mysql.jdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     Statement st = con.createStatement();
-    ResultSet rs;
-    rs = st.executeQuery("select * from users where username='" + username + "' and password='" + password + "'");
-    if (rs.next()) {
-        session.setAttribute("user", username); // the username will be stored in the session
-        out.println("welcome " + username);
-        out.println("<a href='logout.jsp'>Log out</a>");
+    ResultSet rs = st.executeQuery("select * from users where username='" + username + "' and password='" + password + "'");
+    if (rs.next()) { //valid
+        session.setAttribute("user", username); //the username will be stored in the session
         response.sendRedirect("main.jsp");
-    } else {
-        out.println("Invalid password <a href='index.jsp'>try again</a>");
+    } else { //invalid
+        out.println("Invalid username or password. <a href='index.jsp'>Try again</a>");
     }
 %>
 

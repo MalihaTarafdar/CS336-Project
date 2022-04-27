@@ -5,8 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Create New Auction | AuctionHouse</title>
+	<meta charset="ISO-8859-1">
+	<title>Create New Auction | AuctionHouse</title>
 </head>
 <body>
 	
