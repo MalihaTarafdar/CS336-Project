@@ -62,8 +62,9 @@
 		  	for (int i = 0; i < colCount; i++) {
 		    	
 		    	if(i == 0){
-		    		out.println("<TD>" + "<a href='logout.jsp'>" + auctions.getString(i + 1) + "</a> " + "</TD>");
-		    		//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
+		    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
+		    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(i + 1) + "\"" %> ><%= auctions.getString(i + 1) %></a></TD><% 
+		    		
 		    	}else{
 		    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
 		    	}
@@ -109,7 +110,13 @@
 				if(i == 3){
 					i=6;
 				}
-				out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
+				if(i == 0){
+		    		out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
+		    		
+		    		//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
+		    	}else{
+		    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
+		    	}
 			}
 			int aucId = Integer.parseInt(auctions.getString(1));
 			PreparedStatement ps = con.prepareStatement("Select MAX(b.amount) FROM Bids b, Auction a WHERE b.auctionId =?");
