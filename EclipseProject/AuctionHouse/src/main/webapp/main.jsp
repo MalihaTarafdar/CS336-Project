@@ -111,8 +111,8 @@
 					i=6;
 				}
 				if(i == 0){
-		    		out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
-		    		
+		    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
+		    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(i + 1) + "\"" %> ><%= auctions.getString(i + 1) %></a></TD><%
 		    		//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
 		    	}else{
 		    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");

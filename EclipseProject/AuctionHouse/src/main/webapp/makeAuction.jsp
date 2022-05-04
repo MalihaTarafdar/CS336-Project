@@ -31,10 +31,13 @@
     String userName = (String)session.getAttribute("user");
     
     Statement getItemID = con.createStatement();
+    Statement getItemID2 = con.createStatement();
 	ResultSet item_rs1 = getItemID.executeQuery("SELECT max(itemId) FROM Electronics");
-    ResultSet item_rs2 = getItemID.executeQuery("SELECT count(*) FROM Electronics");
+    //ResultSet item_rs2 = getItemID.executeQuery("SELECT count(*) FROM Electronics");
+    ResultSet item_rs2 = getItemID2.executeQuery("SELECT count(*) FROM Electronics");
+    item_rs1.next();
     item_rs2.next();
-    int itemID = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("itemId") + 1 : 1); //save itemID for electronics query
+    int itemID = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemID for electronics query
     
     
     item_statement.setString(1, "" + itemID);
@@ -53,10 +56,12 @@
    	item_statement.executeUpdate();
    	     
     Statement st = con.createStatement();
+    Statement st2 = con.createStatement();
     ResultSet rs1 = st.executeQuery("SELECT max(auctionId) FROM Auction");
-    ResultSet rs2 = st.executeQuery("SELECT count(*) FROM Auction");
+    ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Auction");
+    rs1.next();
     rs2.next();
-    int auctionID = (rs2.getInt("count(*)") > 0 ? rs1.getInt("auctionId") + 1 : 1); //need for Sells
+    int auctionID = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(auctionId)") + 1 : 1); //need for Sells
     //pst.setString(1, "" + (rs2.getInt("count(*)") > 0 ? rs1.getInt("auctionId") + 1 : 1));
     pst.setString(1, "" + auctionID);
     //out.print(rs2.getInt("count(*)") > 0 ? rs1.getInt("auctionId") + 1 : 1);
