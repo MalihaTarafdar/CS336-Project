@@ -31,12 +31,11 @@ CREATE TABLE IF NOT EXISTS `Auction` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Electronics` (
-	`itemID` int PRIMARY KEY,
+	`itemId` int PRIMARY KEY,
 	`serialNumber` int,
     `brand`  varchar(50),
     `model` varchar(50),
     `year` int,
-    `wireless` bool,
     `powerSupply` varchar(50),
     `cpu`  varchar(50),
     `gpu`  varchar(50),

@@ -13,7 +13,7 @@
 	String type = request.getParameter("electronic");
 	%>
 	
-	<form>
+	<form action="makeAuction.jsp">
 	<%
 	out.print("Item Name: <input type=\"text\" name=\"itemName\" required/> <br/>");
 	out.print("Serial Number: <input type=\"text\" name=\"serialNum\"/> <br/>");
@@ -44,6 +44,12 @@
 	%>
 		<input type="submit" value="Submit"/>
 	</form>
+	
+	
+	
+	
+	
+	
 	
 </body>
 </html>
