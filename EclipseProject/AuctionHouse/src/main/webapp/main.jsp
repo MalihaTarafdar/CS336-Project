@@ -2,6 +2,9 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +54,8 @@
 		out.println("<TH>" + "Bid Increment" + "</TH>");
 		out.println("<TH>" + "Closing Date & Time)" + "</TH>");
 		
-		
+		DecimalFormat f = new DecimalFormat("#0.00");
+		DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
 		//INSERT MAX BID HEADER HERE
 		out.println("<TH>" + "Highest Bid" + "</TH>");
 		 
@@ -65,6 +69,8 @@
 		    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
 		    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(i + 1) + "\"" %> ><%= auctions.getString(i + 1) %></a></TD><% 
 		    		
+		    	}else if(i == 3 || i == 4 || i == 5){
+		    		out.println("<TD>" + "$" + f.format(Float.parseFloat(auctions.getString(i + 1))) + "</TD>");
 		    	}else{
 		    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
 		    	}
@@ -75,7 +81,18 @@
 		  	ps.setString(1, "" + aucId);
 		  	ResultSet maxBid = ps.executeQuery();
 		  	maxBid.next();
-		  	out.println("<TD>" + maxBid.getString(1) + "</TD>");
+		  	float maxBidNum;
+		  	if(maxBid.getString(1) == null){
+		  		ps = con.prepareStatement("Select initialPrice FROM Auction WHERE auctionId=?");
+		  		ps.setString(1, "" + aucId);
+		  		ResultSet init = ps.executeQuery();
+		  		init.next();
+		  		maxBidNum = init.getFloat(1);
+		  	}else{
+		  		maxBidNum = Float.parseFloat(maxBid.getString(1));
+		  	}
+		  	
+		  	out.println("<TD>" + "$" + f.format(maxBidNum) + "</TD>");
 		  
 		  	out.println("</TR>");
 		}
@@ -123,7 +140,18 @@
 		  	ps.setString(1, "" + aucId);
 		  	ResultSet maxBid = ps.executeQuery();
 		  	maxBid.next();
-		  	out.println("<TD>" + maxBid.getString(1) + "</TD>");
+		  	float maxBidNum;
+		  	if(maxBid.getString(1) == null){
+		  		ps = con.prepareStatement("Select initialPrice FROM Auction WHERE auctionId=?");
+		  		ps.setString(1, "" + aucId);
+		  		ResultSet init = ps.executeQuery();
+		  		init.next();
+		  		maxBidNum = init.getFloat(1);
+		  	}else{
+		  		maxBidNum = Float.parseFloat(maxBid.getString(1));
+		  	}
+		  	
+		  	out.println("<TD>" + "$" + f.format(maxBidNum) + "</TD>");
 			out.println("</TR>");
 			}
 		out.println("</TABLE></P>");
