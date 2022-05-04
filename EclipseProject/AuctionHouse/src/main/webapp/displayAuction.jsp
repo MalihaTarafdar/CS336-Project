@@ -160,8 +160,12 @@
 	
 	%></P>
 	
-	<input type="submit" name="bidbutton" value="Place Bid?" action=""/> 
-	<% //can either add another jsp, or keep it all on the same page, gonna need to transfer auction id to new jsp ifso%>
+	Set up automatic bidding:
+	<form method="POST" action=<%= "\"makeBid.jsp?Id=" + aucId + "\""%>>
+		Amount: <input type="text" name="amount"/> <br/>
+		Upper Limit: <input type="text" name="upperLimit"/> <br/>
+		<input type="submit" name="bidbutton" value="Place Bid?"/>
+	</form>
 
 
 
