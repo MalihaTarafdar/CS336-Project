@@ -14,14 +14,25 @@
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
     String aucId = request.getParameter("Id");
-    out.print(aucId);
+    //out.print(aucId);
     
-    PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, username, auctionId) VALUES (?, ?, ?, ?)");
-    bidsStmt.setString(1, request.getParameter("amount"));
-    bidsStmt.setString(2, request.getParameter("upperLimit"));
-    bidsStmt.setString(3, (String)session.getAttribute("user"));
-    bidsStmt.setString(4, aucId);
-    bidsStmt.executeUpdate();
+    if( request.getParameter("amount") == null && request.getParameter("upperLimit") == null){ //autobid
+    	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, username, auctionId, increment) VALUES (?, ?, ?, ?, ?)");
+	    bidsStmt.setString(1, request.getParameter("amount"));
+	    bidsStmt.setString(2, request.getParameter("upperLimit"));
+	    bidsStmt.setString(3, (String)session.getAttribute("user"));
+	    bidsStmt.setString(4, aucId);
+	    bidsStmt.setString(5, request.getParameter("bidIncrement"));
+	    bidsStmt.executeUpdate();
+    }else{//normal bid
+    	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, username, auctionId) VALUES (?, ?, ?)");
+    	bidsStmt.setString(1, request.getParameter("amount"));
+    	bidsStmt.setString(2, (String)session.getAttribute("user"));
+    	bidsStmt.setString(3, aucId);
+    	bidsStmt.executeUpdate();
+    }
+    
+    
     
     response.sendRedirect("main.jsp");
 	%>

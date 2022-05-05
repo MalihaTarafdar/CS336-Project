@@ -164,6 +164,8 @@
 	<form method="POST" action=<%= "\"makeBid.jsp?Id=" + aucId + "\""%>>
 		Amount: <input type="text" name="amount"/> <br/>
 		Upper Limit: <input type="text" name="upperLimit"/> <br/>
+		Increment: <input type="text" name="bidIncrement"/> <br/>
+		<input type="submit" name="autobidbutton" value="AutoBid?"/>
 		<input type="submit" name="bidbutton" value="Place Bid?"/>
 	</form>
 
