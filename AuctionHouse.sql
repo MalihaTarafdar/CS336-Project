@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `Bids` (
     `increment` float,
     `username` varchar(50),
     `auctionId` int,
-    PRIMARY KEY(`username`, `auctionId`),
+    `bidId` int PRIMARY KEY,
     FOREIGN KEY(`username`) references `Users`(`username`),
     FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
