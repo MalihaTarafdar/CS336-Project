@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `Buys` (
 
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
-INSERT IGNORE INTO `Users` VALUES ('admin', 'admin');
+INSERT IGNORE INTO `Users` (`username`, `password`) VALUES ('admin', 'admin');
 /*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
 
