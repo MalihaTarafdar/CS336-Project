@@ -25,7 +25,17 @@
         ResultSet rs = st.executeQuery("select * from users where username='" + username + "' and password='" + password + "'");
         if (rs.next()) { //valid
             session.setAttribute("user", username); //the username will be stored in the session
-            response.sendRedirect("main.jsp");
+            Statement st2 = con.createStatement();
+        	ResultSet saleRep = st2.executeQuery("select employeeId from users where username='" + username + "' and password='" + password + "'");
+        	saleRep.next();
+            if(username.equals("admin")){
+            	response.sendRedirect("admin.jsp");
+            }else if(saleRep.getString(1) != null){
+            	response.sendRedirect("saleRep.jsp");
+        	}else{
+            	response.sendRedirect("main.jsp");
+            }
+            
         } else { //invalid
             out.println("Invalid username or password. <a href='index.jsp'>Try again</a>");
         }
