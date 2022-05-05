@@ -82,7 +82,7 @@
 	    	
 	    }
 	  	int aucId = Integer.parseInt(auctions.getString(1));
-		PreparedStatement ps = con.prepareStatement("Select MAX(b.amount) FROM Bids b, Auction a WHERE b.auctionId =?");
+		PreparedStatement ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
 	  	ps.setString(1, "" + aucId);
 	  	ResultSet maxBid = ps.executeQuery();
 	  	maxBid.next();
@@ -141,7 +141,7 @@
 	    	}
 		}
 		int aucId = Integer.parseInt(auctions.getString(1));
-		PreparedStatement ps = con.prepareStatement("Select MAX(b.amount) FROM Bids b, Auction a WHERE b.auctionId =?");
+		PreparedStatement ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
 	  	ps.setString(1, "" + aucId);
 	  	ResultSet maxBid = ps.executeQuery();
 	  	maxBid.next();
@@ -164,16 +164,20 @@
 	
 	
 	Statement bid_st = con.createStatement();
-	ResultSet yourBids = bid_st.executeQuery(
-			"select b.auctionId, a.itemName, Max(b.amount), a.closeDateTime, b.upperLimit, b.increment FROM bids b, auction a where a.auctionId = b.auctionId and b.username = '" 
-	+ session.getAttribute("user") + "'");
+	String query = "SELECT a.auctionId, a.itemName, b.amount, a.closeDateTime, b.upperLimit, b.increment" +
+			" FROM Bids b, Auction a" +
+			" WHERE b.auctionId = a.auctionId AND bidId IN (SELECT MAX(bidId) FROM Bids WHERE username='" + session.getAttribute("user") + "' GROUP BY username, auctionId)";
+	ResultSet yourBids = bid_st.executeQuery(query);
+	//select a.auctionId, a.itemName, b.amount, a.closeDateTime, b.upperLimit, b.increment
+	//from bids b, auction a
+	//where b.auctionId = a.auctionId and bidId in (select max(bidId) from bids where username='test3' group by username, auctionId);
 	
 			
 	ResultSetMetaData bet_rsmd = yourBids.getMetaData();
 	colCount = rsmd.getColumnCount();
 			
 	out.println("<P ALIGN='center'><TABLE BORDER=1>");
-	out.println("Your Bids");
+	out.println("Your Active Bids");
 	out.println("<TR>");
 			
 	out.println("<TH>" + "Auction ID#" + "</TH>");
@@ -205,14 +209,15 @@
 		    		out.println("<TD>" + "$" +  f.format(yourBids.getFloat(i + 1)) + "</TD>");
 		    	}else if(i == 3){
 		    		
-		    		PreparedStatement ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
-				  	ps.setString(1, "" + aucId);
+		    		PreparedStatement ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
+		    	  	ps.setString(1, "" + aucId);
+		    	  	ps.setString(2, "" + aucId);
 				  	ResultSet maxBid = ps.executeQuery();
 				  	maxBid.next();
 		    		float maxBidNum;
 		    		String leadingBidder;
 		    		if(maxBid.getString(1) == null){
-				  		ps = con.prepareStatement("Select initialPrice FROM Auction WHERE auctionId=?");
+				  		ps = con.prepareStatement("SELECT initialPrice FROM Auction WHERE auctionId=?");
 				  		ps.setString(1, "" + aucId);
 				  		ResultSet init = ps.executeQuery();
 				  		init.next();
@@ -229,7 +234,7 @@
 		    		
 		    		String date = yourBids.getString(i);
 		    		StringBuffer sbf = new StringBuffer(date); 
-		    		sbf.deleteCharAt(19);					
+		    		sbf.deleteCharAt(19);
 		    		sbf.deleteCharAt(19);
 		    		String closeTime = sbf.toString();
 		    		String dt[] = closeTime.split(" ");

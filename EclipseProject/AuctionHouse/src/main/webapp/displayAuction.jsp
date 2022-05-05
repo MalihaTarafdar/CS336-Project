@@ -14,6 +14,7 @@
 		Class.forName("com.mysql.jdbc.Driver");
     	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
 		
+    	//show itemName as title
     	Statement st = con.createStatement();
     	PreparedStatement ps = con.prepareStatement("SELECT itemName FROM auction WHERE auctionId=?");
     	String aucId = request.getParameter("Id");
@@ -38,8 +39,9 @@
 	ResultSet item_rs1 = getStuff.executeQuery("SELECT * FROM Electronics WHERE itemId=" + itemId);
 	item_rs1.next();
 	
-	ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
+	ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
   	ps.setString(1, "" + aucId);
+  	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
   	maxBid.next();
 	String curBid = maxBid.getString(1);
@@ -76,8 +78,9 @@
 	float minPrice = Float.parseFloat(auction.getString(4));
 			
 	//check if auction is user's auction
+	//PreparedStatement does not allow parameters inside single quotes
 	Statement stmt = con.createStatement();
-	ResultSet ownAuction = stmt.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a, Users u WHERE s.username = '" 
+	ResultSet ownAuction = stmt.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a WHERE s.username = '" 
 		+ session.getAttribute("user") + "' AND s.auctionId = a.auctionId AND a.auctionId=" + aucId);
 	boolean isOwnAuction = ownAuction.next();
 	%> 
@@ -191,6 +194,13 @@
 	<%
 	}
 	%>
+	<br>
+	
+	
+	Bid History
+	<table>
+		
+	</table>
 
 </body>
 </html>

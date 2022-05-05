@@ -25,8 +25,9 @@
     ResultSet auction = ps.executeQuery();
     auction.next();
     //get highest bid
-    ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
+    ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
   	ps.setString(1, "" + aucId);
+  	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
   	maxBid.next();
   	float price = (maxBid.getString(1) != null) ? Float.parseFloat(maxBid.getString(1)) : Float.parseFloat(auction.getString(5));
@@ -75,20 +76,21 @@
     
     //update automatic bids
     //find max then automatically update all other active bids, repeat until no more updates
+    	//max bid user should not continuously bid over themselves
     //active bid = bid with max bidId for each user
     boolean done = true;
     do {
     	done = true;
-	    ps = con.prepareStatement("Select MAX(amount), username FROM Bids WHERE auctionId=?");
+	    ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
 	  	ps.setString(1, "" + aucId);
 	  	maxBid = ps.executeQuery();
 	  	maxBid.next();
 	  	float maxAmount = (maxBid.getString(1) != null) ? Float.parseFloat(maxBid.getString(1)) : -1;
 	  	
-	    ps = con.prepareStatement(
-	    		"SELECT amount, upperLimit, increment, username, auctionId, MAX(bidId) FROM Bids WHERE auctionId=? AND NOT username='" + maxBid.getString(2) + "' GROUP BY username");
-	    ps.setString(1, "" + aucId);
-	    ResultSet bids = ps.executeQuery();
+	  	//PreparedStatement does not allow parameters inside single quotes
+	  	Statement st = con.createStatement();
+	    ResultSet bids = st.executeQuery(
+	    		"SELECT * FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId + " AND NOT username='" + maxBid.getString(2) + "' GROUP BY USERNAME)");
 	    while (bids.next()) {
 	    	float aucBidIncrement = Float.parseFloat(auction.getString(6));
 	    	float bidsAmount = Float.parseFloat(bids.getString(1));
@@ -99,7 +101,6 @@
 	    		//automatically bid multiple times if does not reach (amount + aucBidIncrement)
 	    		float add = maxAmount + aucBidIncrement - bidsAmount;
 	    		add += (add % bidsIncrement);
-	    		System.out.println(bidsAmount + add > bidsUpperLimit);
 	    		if (bidsAmount + add > bidsUpperLimit) continue;
 	    		PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, increment, username, auctionId, bidId) VALUES (?, ?, ?, ?, ?, ?)");
 	    		bidsStmt.setString(1, "" + (bidsAmount + add));
