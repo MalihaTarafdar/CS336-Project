@@ -21,7 +21,6 @@
     	ResultSet itemName = ps.executeQuery();
     	itemName.next();
     	String name = itemName.getString(1);
-    	//itemName.getString(1);
 	
 	%>
 	<meta charset="ISO-8859-1">
@@ -30,14 +29,13 @@
 <body>
 	
 	<%
-	ps = con.prepareStatement("SELECT itemId FROM auction WHERE auctionId=?");
+	ps = con.prepareStatement("SELECT * FROM auction WHERE auctionId=?");
 	ps.setString(1, aucId);
-	ResultSet itemRs = ps.executeQuery();
-	itemRs.next();
-	String itemID = itemRs.getString(1);
-	ps = con.prepareStatement("SELECT itemId FROM auction WHERE auctionId=");
+	ResultSet auction = ps.executeQuery();
+	auction.next();
+	String itemId = auction.getString(2);
 	Statement getStuff = con.createStatement();
-	ResultSet item_rs1 = getStuff.executeQuery("SELECT * FROM Electronics WHERE itemId=" + itemID);
+	ResultSet item_rs1 = getStuff.executeQuery("SELECT * FROM Electronics WHERE itemId=" + itemId);
 	item_rs1.next();
 	
 	ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
@@ -49,11 +47,7 @@
 	boolean nobids = true;
 	String leader;
 	if(curBid == null){
-		ps = con.prepareStatement("select initialPrice FROM auction WHERE auctionId=?");
-		ps.setString(1, "" + aucId);
-		ResultSet initBid = ps.executeQuery();
-	  	initBid.next();
-	  	currentBid = Float.parseFloat(initBid.getString(1));
+	  	currentBid = Float.parseFloat(auction.getString(5));
 	  	nobids = true;
 	  	leader = "NO CURRENT BIDS";
 	}else{
@@ -62,21 +56,13 @@
 		nobids = false;
 	}
 	
-	ps = con.prepareStatement("select bidIncrement FROM auction WHERE auctionId=?"); //its now hitting me all these new prepare statements are very redundant
-	ps.setString(1, "" + aucId);
-	ResultSet  increment = ps.executeQuery();
-	increment.next();
-  	float incValue = Float.parseFloat(increment.getString(1));
+	float incValue = Float.parseFloat(auction.getString(6));
 	
   	DecimalFormat f = new DecimalFormat("#0.00");
 	DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
 	
 	
-	ps = con.prepareStatement("select closeDateTime FROM auction WHERE auctionId=?"); //its now hitting me all these new prepare statements are very redundant
-	ps.setString(1, "" + aucId);
-	ResultSet  closeDT = ps.executeQuery();
-	closeDT.next();
-	String d1 = closeDT.getString(1);
+	String d1 = auction.getString(7);
 	String t1[] = d1.split(" ");	
 	String why = t1[1];
 	StringBuffer sbf = new StringBuffer(why); //listen I know this looks insane, but like string split or substring wouldnt recognize the .0 in the raw string
@@ -87,10 +73,13 @@
 	String finalDateTime = t1[0] + " " + closeTime;
 	LocalDateTime closeDate = LocalDateTime.parse(finalDateTime, dateForm);// 5/4: returns as date, will need later for closing stuff and comparisons(or not) 
 	
-	
-	
-	
-	
+	float minPrice = Float.parseFloat(auction.getString(4));
+			
+	//check if auction is user's auction
+	Statement stmt = con.createStatement();
+	ResultSet ownAuction = stmt.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a, Users u WHERE s.username = '" 
+		+ session.getAttribute("user") + "' AND s.auctionId = a.auctionId AND a.auctionId=" + aucId);
+	boolean isOwnAuction = ownAuction.next();
 	%> 
 	<p>
 	<span style="font-size:24px"><% out.println("Auction of " + name); %></span><br/>
@@ -104,13 +93,18 @@
 	%>
 		
 	<span style="font-size:20px"><% out.println("Leading Bidder: " + leader); %></span><br/>
+	<%
+	if (isOwnAuction) {%>
+		<span style="font-size:20px"><% out.println("Minimum Price (hidden): $" + f.format(minPrice)); %></span><br/>
+	<%}
+	%>
 	<span style="font-size:20px"><% out.println("Minimum Increment: $" + f.format(incValue)); %></span><br/>
 	<span style="font-size:20px"><% out.println("Closes on " + t1[0] + " at " + closeTime); %></span><br/>
 	</p>
 	
 	<P style="font-size:18px"><%
 	out.println("Auction ID#: " + aucId); %> <br/> <%
-	out.println("ITEM ID#: " + itemID); %> <br/> <%
+	out.println("ITEM ID#: " + itemId); %> <br/> <%
 	if(item_rs1.getString(2) != null){
 		out.println("Serial Number: " + item_rs1.getString(2));
 		%> <br/> <%
@@ -178,17 +172,25 @@
 	
 	%></P>
 	
-	Set up automatic bidding:
-	<form method="POST" action=<%= "\"makeBid.jsp?Id=" + aucId + "\""%>>
-		Amount: <input type="text" name="amount"/> <br/>
-		Upper Limit: <input type="text" name="upperLimit"/> <br/>
-		Increment: <input type="text" name="bidIncrement"/> <br/>
-		<input type="submit" name="autobidbutton" value="AutoBid?"/>
-		<input type="submit" name="bidbutton" value="Place Bid?"/>
-	</form>
-
-
-
+	<%
+	//cannot bid on own auction
+	if (!isOwnAuction) {
+	%>
+		How to bid:
+		<ul>
+			<li>Auto-bid: fill out amount, upper limit, and increment</li>
+			<li>Normal bid: fill out amount</li>
+		</ul>
+		<form method="POST" action=<%= "\"makeBid.jsp?Id=" + aucId + "\""%>>
+			Amount: <input type="text" name="amount"/> <br/>
+			Upper Limit: <input type="text" name="upperLimit"/> <br/>
+			Increment: <input type="text" name="bidIncrement"/> <br/>
+			<input type="submit" name="autobidbutton" value="AutoBid?"/>
+			<input type="submit" name="bidbutton" value="Place Bid?"/>
+		</form>
+	<%
+	}
+	%>
 
 </body>
 </html>

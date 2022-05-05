@@ -24,17 +24,17 @@
 	%>
 		Welcome <%=session.getAttribute("user")%><br>
 		
-		<label for="electronic">Choose type of electronic:</label>
-		<form method="POST" action="addAuction.jsp">
-			<select name="electronic" id="type">
-			  <option value="PC">PC</option>
-			  <option value="Laptop/Tablet">Laptop/Tablet</option>
-			  <option value="Phone">Phone</option>
-			</select>
-			<input type="submit" value="Add Auction"/>
-		</form>
+	<label for="electronic">Choose type of electronic:</label>
+	<form method="POST" action="addAuction.jsp">
+		<select name="electronic" id="type">
+		  <option value="PC">PC</option>
+		  <option value="Laptop/Tablet">Laptop/Tablet</option>
+		  <option value="Phone">Phone</option>
+		</select>
+		<input type="submit" value="Add Auction"/>
+	</form>
 				
-		<%
+	<%
 		
 		Statement st = con.createStatement();
 		ResultSet auctions = st.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a, Users u WHERE s.username = '" 
@@ -53,7 +53,7 @@
 		out.println("<TH>" + "Minimum Price" + "</TH>");
 		out.println("<TH>" + "Initial Price" + "</TH>");
 		out.println("<TH>" + "Bid Increment" + "</TH>");
-		out.println("<TH>" + "Closing Date & Time)" + "</TH>");
+		out.println("<TH>" + "Closing Date & Time" + "</TH>");
 		
 		DecimalFormat f = new DecimalFormat("#0.00");
 		DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
@@ -115,7 +115,7 @@
 		//out.println("<TH>" + "Minimum Price" + "</TH>");
 		//out.println("<TH>" + "Initial Price" + "</TH>");
 		//out.println("<TH>" + "Bid Increment" + "</TH>");
-		out.println("<TH>" + "Closing Date & Time)" + "</TH>");
+		out.println("<TH>" + "Closing Date & Time" + "</TH>");
 		
 		
 		//INSERT MAX BID HEADER HERE
@@ -189,6 +189,7 @@
 		if(yourBids != null){
 			while (yourBids.next()) {
 				out.println("<TR>");
+				if (yourBids.getString(1) == null) break;
 				int aucId = Integer.parseInt(yourBids.getString(1));
 				for (int i = 0; i < colCount + 1; i++) { //this loop is super redundant lol
 					
