@@ -17,7 +17,7 @@ I. Auctions
 			[] alert the winner that they won the auction 
 
 II. Browsing and advanced search functionality 
-[] let people browse on the items and see the status of the current bidding 
+[x] let people browse on the items and see the status of the current bidding 
 [] sort by different criteria (by type, bidding price etc.) 
 [] search the list of items by various criteria. 
 [] a user should be able to: 
