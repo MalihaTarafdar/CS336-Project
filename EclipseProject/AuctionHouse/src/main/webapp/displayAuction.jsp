@@ -40,13 +40,14 @@
 	ResultSet item_rs1 = getStuff.executeQuery("SELECT * FROM Electronics WHERE itemId=" + itemID);
 	item_rs1.next();
 	
-	ps = con.prepareStatement("Select MAX(b.amount) FROM Bids b, Auction a WHERE b.auctionId =?");
+	ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
   	ps.setString(1, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
   	maxBid.next();
 	String curBid = maxBid.getString(1);
 	float currentBid;
 	boolean nobids = true;
+	String leader;
 	if(curBid == null){
 		ps = con.prepareStatement("select initialPrice FROM auction WHERE auctionId=?");
 		ps.setString(1, "" + aucId);
@@ -54,8 +55,10 @@
 	  	initBid.next();
 	  	currentBid = Float.parseFloat(initBid.getString(1));
 	  	nobids = true;
+	  	leader = "NO CURRENT BIDS";
 	}else{
 		currentBid = Float.parseFloat(curBid);
+		leader = maxBid.getString(2);
 		nobids = false;
 	}
 	
@@ -100,7 +103,7 @@
 	}
 	%>
 		
-	
+	<span style="font-size:20px"><% out.println("Leading Bidder: " + leader); %></span><br/>
 	<span style="font-size:20px"><% out.println("Minimum Increment: $" + f.format(incValue)); %></span><br/>
 	<span style="font-size:20px"><% out.println("Closes on " + t1[0] + " at " + closeTime); %></span><br/>
 	</p>

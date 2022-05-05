@@ -160,12 +160,10 @@
 		
 		
 		Statement bid_st = con.createStatement();
-		ResultSet yourBids = bid_st.executeQuery("select b.auctionId, a.itemName, Max(b.amount), a.closeDateTime FROM bids b, auction a where a.auctionId = b.auctionId and b.username = '" 
+		ResultSet yourBids = bid_st.executeQuery("select b.auctionId, a.itemName, Max(b.amount), a.closeDateTime, b.upperLimit, b.increment FROM bids b, auction a where a.auctionId = b.auctionId and b.username = '" 
 		+ session.getAttribute("user") + "'");
 		
-		//Statement max_st = con.createStatement();
-		//ResultSet maxBid =  st.executeQuery("select MAX(b.amount), b.username from bids b, auction a WHERE b.auctionId = " + aucId);
-		//ResultSet maxBid =  st.executeQuery("select MAX(b.amount), from bids b, auction a WHERE b.auctionId = " + aucId);
+				
 		ResultSetMetaData bet_rsmd = yourBids.getMetaData();
 		colCount = rsmd.getColumnCount();
 				
@@ -180,6 +178,13 @@
 		out.println("<TH>" + "Leading User" + "</TH>");
 		out.println("<TH>" + "Closing Date" + "</TH>");
 		out.println("<TH>" + "Closing time" + "</TH>");
+		out.println("<TH>" + "Auto Bid" + "</TH>");
+		
+		
+		
+		
+		
+		
 		out.println("</TR>");
 		if(yourBids != null){
 			while (yourBids.next()) {
@@ -202,18 +207,21 @@
 					  	ResultSet maxBid = ps.executeQuery();
 					  	maxBid.next();
 			    		float maxBidNum;
+			    		String leadingBidder;
 			    		if(maxBid.getString(1) == null){
 					  		ps = con.prepareStatement("Select initialPrice FROM Auction WHERE auctionId=?");
 					  		ps.setString(1, "" + aucId);
 					  		ResultSet init = ps.executeQuery();
 					  		init.next();
 					  		maxBidNum = init.getFloat(1);
+					  		leadingBidder = "'No Bids Placed'";
 					  	}else{
 					  		maxBidNum = Float.parseFloat(maxBid.getString(1));
+					  		leadingBidder = maxBid.getString(2);
 					  	}
 					  	
 					  	out.println("<TD>" + "$" + f.format(maxBidNum) + "</TD>");
-					  	out.println("<TD>" + maxBid.getString(2) + "</TD>");
+					  	out.println("<TD>" + leadingBidder + "</TD>");
 			    	}else if(i == 4){
 			    		
 			    		String date = yourBids.getString(i);
@@ -222,10 +230,26 @@
 			    		sbf.deleteCharAt(19);
 			    		String closeTime = sbf.toString();
 			    		String dt[] = closeTime.split(" ");
-			    		//LocalDateTime closeDate = LocalDateTime.parse(closeTime, dateForm);
-			    		out.println("<TD>" + dt[0] + "</TD>");
-			    		out.println("<TD>" + dt[1] + "</TD>");
+			    		LocalDateTime closeDate = LocalDateTime.parse(closeTime, dateForm);
+			    		LocalDateTime curTime = LocalDateTime.now();
 			    		
+			    		if(curTime.isAfter(closeDate)){
+			    			out.println("<TD>" + "CLOSED" + "</TD>");
+				    		out.println("<TD>" + "CLOSED" + "</TD>");
+			    		}else{
+			    			out.println("<TD>" + dt[0] + "</TD>");
+			    			out.println("<TD>" + dt[1] + "</TD>");
+			    		}
+			    		
+			    		
+			    		
+			    		
+			    	}else if(i == 5){
+			    		if(yourBids.getString(i) == null && yourBids.getString(i+1) == null){
+			    			out.println("<TD>" + "DISABLED" + "</TD>");
+			    		}else{
+			    			out.println("<TD>" + "ENABLED" + "</TD>");
+			    		}
 			    		
 			    	}else{
 			    		//out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
@@ -233,6 +257,9 @@
 				}
 			}
 		}
+		
+		
+		
 		out.println("</TABLE></P>");
 		
 		%>
