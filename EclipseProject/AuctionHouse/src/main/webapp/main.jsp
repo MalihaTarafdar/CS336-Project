@@ -105,7 +105,7 @@
 		rsmd = auctions.getMetaData();
 		colCount = rsmd.getColumnCount();
 		out.println("<P ALIGN='center'><TABLE BORDER=1>");
-		out.println("All Auctions");
+		out.println("All Active Auctions");
 		out.println("<TR>");
 		out.println("<TH>" + "Auction ID#" + "</TH>");
 		out.println("<TH>" + "Item ID#" + "</TH>");

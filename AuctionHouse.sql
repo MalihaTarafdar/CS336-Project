@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `Sells` (
 CREATE TABLE IF NOT EXISTS `Bids` (
 	`amount` float,
     `upperLimit` float,
+    `increment` float,
     `username` varchar(50),
     `auctionId` int,
     PRIMARY KEY(`username`, `auctionId`),
