@@ -16,7 +16,7 @@ USE `AuctionHouse`;
 CREATE TABLE IF NOT EXISTS `Users` (
   `username` varchar(50) PRIMARY KEY,
   `password` varchar(50),
-  `employeeId` varchar(50)
+  `employeeId` int
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Auction` (
