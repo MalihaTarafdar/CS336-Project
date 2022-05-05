@@ -198,8 +198,22 @@
 	
 	
 	Bid History
-	<table>
-		
+	<table border=1>
+		<tr>
+			<th>User</th>
+			<th>Amount</th>
+		</tr>
+		<%
+			ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE auctionId=? ORDER BY bidId DESC");
+			ps.setString(1, aucId);
+			ResultSet bidHistory = ps.executeQuery();
+			while (bidHistory.next()) {
+				out.print("<tr>");
+				out.print("<td>" + bidHistory.getString(1) + "</td>");
+				out.print("<td>" + bidHistory.getString(2) + "</td>");
+				out.print("</tr>");
+			}
+		%>
 	</table>
 
 </body>

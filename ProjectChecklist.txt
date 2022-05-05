@@ -21,7 +21,7 @@ II. Browsing and advanced search functionality
 [] sort by different criteria (by type, bidding price etc.) 
 [] search the list of items by various criteria. 
 [] a user should be able to: 
-	[] view all the history of bids for any specific auction 
+	[x] view all the history of bids for any specific auction 
 	[] view the list of all auctions a specific buyer or seller has participated in 
 	[] view the list of "similar" items on auctions in the preceding month (and auction information about them)
 [] let user set an alert for specific items s/he is interested  
