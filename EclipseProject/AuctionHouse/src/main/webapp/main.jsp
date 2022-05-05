@@ -37,7 +37,8 @@
 		<%
 		
 		Statement st = con.createStatement();
-		ResultSet auctions = st.executeQuery("SELECT a.* FROM Sells s, Auction a, Users u WHERE u.username = s.username AND s.auctionId =  a.auctionId;");
+		ResultSet auctions = st.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a, Users u WHERE s.username = '" 
+		+ session.getAttribute("user") + "' AND s.auctionId =  a.auctionId;");
 		//SELECT s.username FROM Sells s, Auction a where s.auctionId = a.auctionId;
 		
 		ResultSetMetaData rsmd = auctions.getMetaData();
@@ -157,6 +158,82 @@
 		out.println("</TABLE></P>");
 		
 		
+		
+		Statement bid_st = con.createStatement();
+		ResultSet yourBids = bid_st.executeQuery("select b.auctionId, a.itemName, Max(b.amount), a.closeDateTime FROM bids b, auction a where a.auctionId = b.auctionId and b.username = '" 
+		+ session.getAttribute("user") + "'");
+		
+		//Statement max_st = con.createStatement();
+		//ResultSet maxBid =  st.executeQuery("select MAX(b.amount), b.username from bids b, auction a WHERE b.auctionId = " + aucId);
+		//ResultSet maxBid =  st.executeQuery("select MAX(b.amount), from bids b, auction a WHERE b.auctionId = " + aucId);
+		ResultSetMetaData bet_rsmd = yourBids.getMetaData();
+		colCount = rsmd.getColumnCount();
+				
+		out.println("<P ALIGN='center'><TABLE BORDER=1>");
+		out.println("Your Bids");
+		out.println("<TR>");
+				
+		out.println("<TH>" + "Auction ID#" + "</TH>");
+		out.println("<TH>" + "Item Name" + "</TH>");
+		out.println("<TH>" + "Your bid" + "</TH>");
+		out.println("<TH>" + "Highest bid" + "</TH>");
+		out.println("<TH>" + "Leading User" + "</TH>");
+		out.println("<TH>" + "Closing Date" + "</TH>");
+		out.println("<TH>" + "Closing time" + "</TH>");
+		out.println("</TR>");
+		if(yourBids != null){
+			while (yourBids.next()) {
+				out.println("<TR>");
+				int aucId = Integer.parseInt(yourBids.getString(1));
+				for (int i = 0; i < colCount + 1; i++) { //this loop is super redundant lol
+					
+					if(i == 0){
+			    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
+			    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + yourBids.getString(i + 1) + "\"" %> ><%= yourBids.getString(i + 1) %></a></TD><%
+			    		//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
+			    	}else if(i == 1){
+			    		out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
+			    	}else if(i == 2){
+			    		out.println("<TD>" + "$" +  f.format(yourBids.getFloat(i + 1)) + "</TD>");
+			    	}else if(i == 3){
+			    		
+			    		PreparedStatement ps = con.prepareStatement("Select MAX(b.amount), b.username FROM Bids b, Auction a WHERE b.auctionId =?");
+					  	ps.setString(1, "" + aucId);
+					  	ResultSet maxBid = ps.executeQuery();
+					  	maxBid.next();
+			    		float maxBidNum;
+			    		if(maxBid.getString(1) == null){
+					  		ps = con.prepareStatement("Select initialPrice FROM Auction WHERE auctionId=?");
+					  		ps.setString(1, "" + aucId);
+					  		ResultSet init = ps.executeQuery();
+					  		init.next();
+					  		maxBidNum = init.getFloat(1);
+					  	}else{
+					  		maxBidNum = Float.parseFloat(maxBid.getString(1));
+					  	}
+					  	
+					  	out.println("<TD>" + "$" + f.format(maxBidNum) + "</TD>");
+					  	out.println("<TD>" + maxBid.getString(2) + "</TD>");
+			    	}else if(i == 4){
+			    		
+			    		String date = yourBids.getString(i);
+			    		StringBuffer sbf = new StringBuffer(date); 
+			    		sbf.deleteCharAt(19);					
+			    		sbf.deleteCharAt(19);
+			    		String closeTime = sbf.toString();
+			    		String dt[] = closeTime.split(" ");
+			    		//LocalDateTime closeDate = LocalDateTime.parse(closeTime, dateForm);
+			    		out.println("<TD>" + dt[0] + "</TD>");
+			    		out.println("<TD>" + dt[1] + "</TD>");
+			    		
+			    		
+			    	}else{
+			    		//out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
+			    	}
+				}
+			}
+		}
+		out.println("</TABLE></P>");
 		
 		%>
 		

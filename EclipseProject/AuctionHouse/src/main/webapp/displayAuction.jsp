@@ -46,14 +46,17 @@
   	maxBid.next();
 	String curBid = maxBid.getString(1);
 	float currentBid;
+	boolean nobids = true;
 	if(curBid == null){
 		ps = con.prepareStatement("select initialPrice FROM auction WHERE auctionId=?");
 		ps.setString(1, "" + aucId);
 		ResultSet initBid = ps.executeQuery();
 	  	initBid.next();
 	  	currentBid = Float.parseFloat(initBid.getString(1));
+	  	nobids = true;
 	}else{
 		currentBid = Float.parseFloat(curBid);
+		nobids = false;
 	}
 	
 	ps = con.prepareStatement("select bidIncrement FROM auction WHERE auctionId=?"); //its now hitting me all these new prepare statements are very redundant
@@ -82,10 +85,22 @@
 	LocalDateTime closeDate = LocalDateTime.parse(finalDateTime, dateForm);// 5/4: returns as date, will need later for closing stuff and comparisons(or not) 
 	
 	
+	
+	
+	
 	%> 
 	<p>
 	<span style="font-size:24px"><% out.println("Auction of " + name); %></span><br/>
-	<span style="font-size:20px; color: #3D8A30"><% out.println("Current Price: $" + f.format(currentBid)); %></span> <br/>
+	
+	<% 
+	if(nobids){ %>
+		  <span style="font-size:20px; color: #3D8A30"><% out.println("Starting Bid: $" + f.format(currentBid)); %></span> <br/> <%
+	}else{
+		%><span style="font-size:20px; color: #3D8A30"><% out.println("Current Bid: $" + f.format(currentBid)); %></span> <br/> <%
+	}
+	%>
+		
+	
 	<span style="font-size:20px"><% out.println("Minimum Increment: $" + f.format(incValue)); %></span><br/>
 	<span style="font-size:20px"><% out.println("Closes on " + t1[0] + " at " + closeTime); %></span><br/>
 	</p>
