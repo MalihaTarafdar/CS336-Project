@@ -19,17 +19,25 @@
     
     Statement st = con.createStatement();
     
-    //ResultSet maxEID = st.executeQuery("select MAX(employeeId) FROM Users");
-    //maxEID.next();
-   // int eid = init.getInt(1);
+    ResultSet maxEID = st.executeQuery("select MAX(employeeId) FROM Users");
+   	maxEID.next();
+    
+   	int eid;
+    if(maxEID.getInt(1) == 0){
+    	eid = 1;
+    }else{
+    	eid = maxEID.getInt(1) + 1;
+    }
     
     
     
-    //PreparedStatement pst = con.prepareStatement("INSERT INTO Users(username, password, employeeId) VALUES (?, ?, ?)");
-    //pst.setString(1, username);
-    //pst.setString(2, password);
-    //pst.setString(2, eid);
-    //pst.executeUpdate();
+    
+    
+    PreparedStatement pst = con.prepareStatement("INSERT INTO Users(username, password, employeeId) VALUES (?, ?, ?)");
+    pst.setString(1, username);
+    pst.setString(2, password);
+    pst.setInt(3, eid);
+    pst.executeUpdate();
 
 	response.sendRedirect("admin.jsp");
 %>

@@ -30,7 +30,7 @@
         	saleRep.next();
             if(username.equals("admin")){
             	response.sendRedirect("admin.jsp");
-            }else if(saleRep.getString(1) != null){
+            }else if(saleRep.getInt(1) != 0){
             	response.sendRedirect("saleRep.jsp");
         	}else{
             	response.sendRedirect("main.jsp");
