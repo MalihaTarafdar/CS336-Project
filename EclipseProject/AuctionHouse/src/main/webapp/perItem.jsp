@@ -33,7 +33,7 @@
 	
     Statement earningSt = con.createStatement();
     //ResultSet earningsPerItem = earningSt.executeQuery(" select e.itemId, SUM(b.price) from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId");
-	ResultSet earningsPerItem = earningSt.executeQuery("select SUM(b.price) from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId;");
+	ResultSet earningsPerItem = earningSt.executeQuery("(SELECT itemId, b.price FROM auction a LEFT JOIN buys b using(auctionId) where b.auctionId IS NULL) UNION (select e.itemId, SUM(b.price)  from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId) order by itemId;");
     
 	
 	while(itemDetails.next()){
@@ -43,11 +43,11 @@
 		out.println("<TD>" + itemDetails.getInt(1) + "</TD>");
 		out.println("<TD>" + itemDetails.getString(2) + "</TD>");
 		out.println("<TD>" + itemDetails.getString(3) + "</TD>");
-		if(!earningsPerItem.next()){
-			out.println("<TD>" + "$0.00" + "</TD>");
-		}else{
-			out.println("<TD>" + "$" + f.format(earningsPerItem.getFloat(1)) + "</TD>");
-		}
+		
+		
+		earningsPerItem.next();
+		out.println("<TD>" + "$" + f.format(earningsPerItem.getFloat(2)) + "</TD>");
+		
 		out.println("</TR>");
 	}
     
