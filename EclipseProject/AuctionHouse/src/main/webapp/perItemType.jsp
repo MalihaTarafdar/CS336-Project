@@ -18,7 +18,7 @@
     DecimalFormat f = new DecimalFormat("#0.00");
     
     //total for all items in order
-    //(SELECT itemId, b.price FROM auction a LEFT JOIN buys b using(auctionId) where b.auctionId IS NULL) UNION (select e.itemId, SUM(b.price)  from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId) order by itemId;
+    //SELECT itemId, b.price FROM auction a LEFT JOIN buys b using(auctionId) where b.auctionId IS NULL) UNION (select e.itemId, SUM(b.price)  from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId) order by itemId;
     
     //all PC itemId
     //Statement getPC = con.createStatement(); 
