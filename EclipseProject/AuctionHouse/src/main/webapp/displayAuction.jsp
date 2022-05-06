@@ -28,7 +28,7 @@
 	<title><% out.print(itemName.getString(1));%></title>
 </head>
 <body>
-	
+	<a href="main.jsp">Back</a>
 	<%
 	ps = con.prepareStatement("SELECT * FROM auction WHERE auctionId=?");
 	ps.setString(1, aucId);
@@ -65,7 +65,7 @@
 	
 	
 	String d1 = auction.getString(7);
-	String t1[] = d1.split(" ");	
+	String t1[] = d1.split(" ");
 	String why = t1[1];
 	StringBuffer sbf = new StringBuffer(why); //listen I know this looks insane, but like string split or substring wouldnt recognize the .0 in the raw string
 	sbf.deleteCharAt(8);					//its insane, this was the only way to remove the last 2 digits, im losing my mind -JM
@@ -74,6 +74,7 @@
 
 	String finalDateTime = t1[0] + " " + closeTime;
 	LocalDateTime closeDate = LocalDateTime.parse(finalDateTime, dateForm);// 5/4: returns as date, will need later for closing stuff and comparisons(or not) 
+	boolean isClosed = LocalDateTime.now().isAfter(closeDate);
 	
 	float minPrice = Float.parseFloat(auction.getString(4));
 			
@@ -95,14 +96,14 @@
 	}
 	%>
 		
-	<span style="font-size:20px"><% out.println("Leading Bidder: " + leader); %></span><br/>
+	<span style="font-size:20px"><% out.println(((isClosed) ? "Winner" : "Leading Bidder") + ": " + leader); %></span><br/>
 	<%
 	if (isOwnAuction) {%>
 		<span style="font-size:20px"><% out.println("Minimum Price (hidden): $" + f.format(minPrice)); %></span><br/>
 	<%}
 	%>
 	<span style="font-size:20px"><% out.println("Minimum Increment: $" + f.format(incValue)); %></span><br/>
-	<span style="font-size:20px"><% out.println("Closes on " + t1[0] + " at " + closeTime); %></span><br/>
+	<span style="font-size:20px"><% out.println("Close" + ((isClosed) ? "d" : "s") + " on " + t1[0] + " at " + closeTime); %></span><br/>
 	</p>
 	
 	<P style="font-size:18px"><%
@@ -174,6 +175,32 @@
 	}
 	
 	%></P>
+	
+	<%
+	//show buy button for winner
+	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
+	ps.setString(1, "" + aucId);
+	ps.setString(2, "" + aucId);
+	ResultSet winner = ps.executeQuery();
+	ResultSet buyer = st.executeQuery("SELECT username, auctionId FROM Buys WHERE username='" + session.getAttribute("user") + "' AND auctionId=" + aucId);
+	//is top bidder exists, auction is closed, user is winner, and item not already bought
+	if (buyer.next()) {
+	%>
+		<p style="font-size: 20px; color: blue;">You already purchased this item.</p>
+	<%
+	} else if (winner.next() && isClosed && session.getAttribute("user").equals(winner.getString(1))) {
+		%>
+		<span style="font-size: 20px;">You won the auction! Purchase the item for <span style="color: blue;">$<%= winner.getFloat(2) %></span>.</span>
+		<form method="POST" action="buyItem.jsp">
+			<input type="hidden" name="amount" value="<%= winner.getFloat(2) %>"/>
+			<input type="hidden" name="auctionId" value="<%= aucId %>"/>
+			<input type="submit" name="buybutton" value="Buy Item"/>
+		</form><br>
+		<%
+		//request.setAttribute("amount", winner.getFloat(2));
+		//request.setAttribute("auctionId", aucId);
+	}
+	%>
 	
 	<%
 	//cannot bid on own auction

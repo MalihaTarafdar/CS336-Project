@@ -36,7 +36,7 @@
 		out.print("Storage(GBs): <input type=\"text\" name=\"storage\"/> <br/>");
 		out.print("Chip: <input type=\"text\" name=\"chip\"/> <br/>");
 	}
-	out.print("Minimum Price (hidden): <input type=\"text\" name=\"minPrice\" required/> <br/>");
+	out.print("Minimum Price (hidden): <input type=\"text\" name=\"minPrice\"/> <br/>");
 	out.print("Initial Price: <input type=\"text\" name=\"initialPrice\" required/> <br/>");
 	out.print("Bid Increment: <input type=\"text\" name=\"bidIncrement\" required/> <br/>");
 	out.print("Close Date and Time: <input style=\"width:200px;\" type=\"text\" name=\"closeDateTime\" placeholder=\"YYYY-MM-DD hh:mm:ss\" required/> <br/>");

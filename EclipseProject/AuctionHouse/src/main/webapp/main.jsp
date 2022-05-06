@@ -41,8 +41,8 @@
     //TODO: alert winner that they won
 	
 	Statement st = con.createStatement();
-	ResultSet auctions = st.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a, Users u WHERE s.username = '" 
-	+ session.getAttribute("user") + "' AND s.auctionId =  a.auctionId;");
+	ResultSet auctions = st.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a WHERE s.username = '" 
+			+ session.getAttribute("user") + "' AND s.auctionId =  a.auctionId;");
 	//SELECT s.username FROM Sells s, Auction a where s.auctionId = a.auctionId;
 	
 	ResultSetMetaData rsmd = auctions.getMetaData();
