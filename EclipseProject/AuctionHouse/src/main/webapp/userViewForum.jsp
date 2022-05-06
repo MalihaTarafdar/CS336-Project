@@ -75,7 +75,7 @@
 		%><br><span style="font-size:16px"><% out.print("Question ID#: " + answered_posts.getInt(1));%></span> <%
 		%><br><span style="font-size:16px"><% out.print("Question: " + answered_posts.getString(2));%></span></br> <%
 		%><br><span style="font-size:16px"><% out.print("Answer: " + answered_posts.getString(3));%></span></br> <%
-		%><br><span style="font-size:16px"><% out.print("- " + answered_posts.getString(4));%></span></br> <%
+		%><span style="font-size:16px"><% out.print("- " + answered_posts.getString(4));%></span></br> <%
 		
 		while(answered_posts.next()){
 			out.print("------------------------------------------------------------");
@@ -83,7 +83,7 @@
 			%><br><span style="font-size:16px"><% out.print("Question ID#: " + answered_posts.getInt(1));%></span> <%
 			%><br><span style="font-size:16px"><% out.print("Question: " + answered_posts.getString(2));%></span></br> <%
 			%><br><span style="font-size:16px"><% out.print("Answer: " + answered_posts.getString(3));%></span></br> <%
-			%><br><span style="font-size:16px"><% out.print("- " + answered_posts.getString(4));%></span></br> <%
+			%><<span style="font-size:16px"><% out.print("- " + answered_posts.getString(4));%></span></br> <%
 			out.print("------------------------------------------------------------");
 			%><br> <%
 
