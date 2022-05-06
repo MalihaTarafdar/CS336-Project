@@ -28,7 +28,7 @@
 	<title><% out.print(itemName.getString(1));%></title>
 </head>
 <body>
-	<a href="main.jsp">Back</a>
+	<a href="main.jsp">Return to Main</a>
 	<%
 	ps = con.prepareStatement("SELECT * FROM auction WHERE auctionId=?");
 	ps.setString(1, aucId);

@@ -76,6 +76,14 @@ CREATE TABLE IF NOT EXISTS `Buys` (
     FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `Alerts` (
+	`alertId` int PRIMARY KEY,
+    `username` varchar(50),
+    `alert` varchar(200),
+    `dateTime` datetime,
+    FOREIGN KEY(`username`) references `Users`(`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
 INSERT IGNORE INTO `Users` (`username`, `password`) VALUES ('admin', 'admin');

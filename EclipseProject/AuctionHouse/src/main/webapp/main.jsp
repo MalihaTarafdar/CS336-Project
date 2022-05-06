@@ -32,15 +32,32 @@
 		  <option value="Phone">Phone</option>
 		</select>
 		<input type="submit" value="Add Auction"/>
-	</form>
+	</form><br>
 				
 	<%
-	//TODO: alerts section
-	//TODO: alert users of their bid being automatically updated or not (upperLimit reached)
-    //TOOD: alert top bidder that they are top and alert previous top bidder that they have been surpassed
+	//TODO: alert auto bidders when upperLimit reached
+    //TOOD: alert normal bidders when surpassed
     //TODO: alert winner that they won
+    //TODO: alert when item becomes available
+    
+    Statement st = con.createStatement();
+	ResultSet unseenAlerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") +
+			"' AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now()");
+    out.print("<span style='font-size: 18px;'>Recent Alerts</span> (within the last week)<br>");
+    if (unseenAlerts.next()) {
+    	out.print("<table border=1>");
+        do {
+        	out.print("<tr><td>");
+        	out.print(unseenAlerts.getString(3));
+        	out.print("</td></tr>");
+        } while (unseenAlerts.next());
+	    out.print("</table>");
+    } else {
+    	out.print("No new alerts.<br>");
+    }
+	out.print("<a href='alerts.jsp'>Show all alerts</a>");
 	
-	Statement st = con.createStatement();
+	
 	ResultSet auctions = st.executeQuery("SELECT DISTINCT a.* FROM Sells s, Auction a WHERE s.username = '" 
 			+ session.getAttribute("user") + "' AND s.auctionId =  a.auctionId;");
 	//SELECT s.username FROM Sells s, Auction a where s.auctionId = a.auctionId;
@@ -48,7 +65,7 @@
 	ResultSetMetaData rsmd = auctions.getMetaData();
 	int colCount = rsmd.getColumnCount();
 	out.println("<P ALIGN='center'><TABLE BORDER=1>");
-	out.println("Your Auctions");
+	out.print("<span style='font-size: 18px;'>Your Auctions</span><br>");
 	out.println("<TR>");
 			
 	out.println("<TH>" + "Auction ID#" + "</TH>");
@@ -110,7 +127,7 @@
 	rsmd = auctions.getMetaData();
 	colCount = rsmd.getColumnCount();
 	out.println("<P ALIGN='center'><TABLE BORDER=1>");
-	out.println("All Active Auctions");
+	out.print("<span style='font-size: 18px;'>All Active Auctions</span><br>");
 	out.println("<TR>");
 	out.println("<TH>" + "Auction ID#" + "</TH>");
 	out.println("<TH>" + "Item ID#" + "</TH>");
@@ -177,7 +194,7 @@
 	colCount = rsmd.getColumnCount();
 			
 	out.println("<P ALIGN='center'><TABLE BORDER=1>");
-	out.println("Your Active Bids");
+	out.print("<span style='font-size: 18px;'>Your Active Bids</span><br>");
 	out.println("<TR>");
 			
 	out.println("<TH>" + "Auction ID#" + "</TH>");

@@ -2,6 +2,8 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.util.HashSet" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,9 +39,8 @@
     } else if (amount > upperLimit) {
     	out.print("Amount cannot be higher than upper limit. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
     } else {
-		
     	Statement st1 = con.createStatement();
-		Statement st2 = con.createStatement();
+    	Statement st2 = con.createStatement();
 		ResultSet rs1 = st1.executeQuery("SELECT MAX(bidId) FROM Bids");
 		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Bids");
 		rs1.next();
@@ -78,11 +79,13 @@
     //find max then automatically update all other active bids, repeat until no more updates
     	//max bid user should not continuously bid over themselves
     //active bid = bid with max bidId for each user
+    HashSet<String> usersUpdated = new HashSet<>();
     boolean done = true;
     do {
     	done = true;
 	    ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
 	  	ps.setString(1, "" + aucId);
+	  	ps.setString(2, "" + aucId);
 	  	maxBid = ps.executeQuery();
 	  	maxBid.next();
 	  	float maxAmount = (maxBid.getString(1) != null) ? Float.parseFloat(maxBid.getString(1)) : -1;
@@ -110,7 +113,7 @@
 	    		bidsStmt.setString(5, "" + aucId);
 	    		
 	    		Statement st1 = con.createStatement();
-	    		Statement st2 = con.createStatement();
+	        	Statement st2 = con.createStatement();
 	    		ResultSet rs1 = st1.executeQuery("SELECT MAX(bidId) FROM Bids");
 	    		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Bids");
 	    		rs1.next();
@@ -119,11 +122,34 @@
 	    		bidsStmt.setString(6, "" + bidId);
 	    		
 	    		bidsStmt.executeUpdate();
+	    		usersUpdated.add(bids.getString(4));
 	    		done = false;
 	    	}
 	    }
     } while (!done);
+    
+    //send alerts to users whose bids were updated
+    for (String user : usersUpdated) {
+    	ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
+    	
+    	Statement st1 = con.createStatement();
+    	Statement st2 = con.createStatement();
+    	ResultSet rs1 = st1.executeQuery("SELECT MAX(alertId) FROM Alerts");
+		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Alerts");
+		rs1.next();
+		rs2.next();
+		int alertId = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(alertId)") + 1 : 1);
+		ps.setString(1, "" + alertId);
+		
+		ps.setString(2, user);
+		ps.setString(3, "Your bid on <a href='displayAuction.jsp?Id=" + aucId + "'>Auction " + aucId + "</a> has been automatically udpated. ");
+		ps.setString(4, LocalDateTime.now().toString());
+		ps.executeUpdate();
+    }
 	%>
+	
+	
+	
 	
 	
 	
