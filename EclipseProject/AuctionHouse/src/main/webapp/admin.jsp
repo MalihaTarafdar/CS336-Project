@@ -29,7 +29,7 @@
 		<button type="submit" formaction="perItemType.jsp">Generate Earnings per Item-Type</button><br/>
 		<button type="submit" formaction="perUserReport.jsp">Generate Earnings per end-user</button><br/>
 		<button type="submit" formaction="bestSelling.jsp">Generate Best Selling Items Report</button><br/>
-		<button type="submit" formaction="report_totalEarnings.jsp">Generate Best Buyers Report</button><br/>
+		<button type="submit" formaction="bestBuyers.jsp">Generate Best Buyers Report</button><br/>
 		
 		
 	</form>
