@@ -84,6 +84,17 @@ CREATE TABLE IF NOT EXISTS `Alerts` (
     FOREIGN KEY(`username`) references `Users`(`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `Posts` (
+    `postId` int PRIMARY KEY,
+    `username` varchar(50),
+    `employee` varchar(50),
+    `question` varchar(200),
+    `answer` varchar(200),
+    FOREIGN KEY(`username`) references `Users`(`username`),
+	FOREIGN KEY(`employee`) references `Users`(`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
 INSERT IGNORE INTO `Users` (`username`, `password`) VALUES ('admin', 'admin');

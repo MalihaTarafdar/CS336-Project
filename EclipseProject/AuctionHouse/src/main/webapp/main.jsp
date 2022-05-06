@@ -40,6 +40,9 @@
     //TODO: alert winner that they won
     //TODO: alert when item becomes available
     
+    out.print("<span style='font-size: 18px;'>Post and View Questions<br>");
+	out.print("<a href='userViewForum.jsp'>Enter Forum</a><p></p>");
+    
     Statement st = con.createStatement();
 	ResultSet unseenAlerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") +
 			"' AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now()");
