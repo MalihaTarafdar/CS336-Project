@@ -44,7 +44,15 @@
   	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
   	maxBid.next();
-	String curBid = maxBid.getString(1);
+	String curBid;
+	
+	if(maxBid.next()){
+		curBid = maxBid.getString(1);
+	}else{
+		curBid = null;
+	}
+	
+	
 	float currentBid;
 	boolean nobids = true;
 	String leader;

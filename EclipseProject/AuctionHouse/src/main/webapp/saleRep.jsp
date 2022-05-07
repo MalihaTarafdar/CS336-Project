@@ -18,6 +18,22 @@
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
 	String curUser = (String)session.getAttribute("user"); 
 	
+	
+	
+	%>
+	
+	<form action="viewAccount.jsp">
+	<span style="font-size:16px">Enter User To Edit</span><br>
+	<input type="text" id="usr" name = "usr"><br>
+	<input type="submit" value="Submit"><br>
+	</form>
+	<%
+	
+	
+	
+	
+	
+	
 	String getPosts = "select postId, question from Posts where answer IS NULL order by postId desc";
 	Statement getSt = con.createStatement();
 	ResultSet unanswered_posts = getSt.executeQuery(getPosts);

@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `Auction` (
     `bidIncrement` float,
     `closeDateTime` datetime,
     PRIMARY KEY(`auctionId`, `itemId`),
-    FOREIGN KEY(`itemId`) references `Electronics`(`itemId`)
+    FOREIGN KEY(`itemId`) references `Electronics`(`itemId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Electronics` (
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `Sells` (
 	`username` varchar(50),
     `auctionId` int,
     PRIMARY KEY(`username`, `auctionId`),
-    FOREIGN KEY(`username`) references `Users`(`username`),
-    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE,
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Bids` (
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `Bids` (
     `username` varchar(50),
     `auctionId` int,
     `bidId` int PRIMARY KEY,
-    FOREIGN KEY(`username`) references `Users`(`username`),
-    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE,
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Buys` (
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS `Buys` (
     `auctionId` int,
     `price` float,
     PRIMARY KEY(`username`, `auctionId`),
-    FOREIGN KEY(`username`) references `Users`(`username`),
-    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`)
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE,
+    FOREIGN KEY(`auctionId`) references `Auction`(`auctionId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Alerts` (
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `Alerts` (
     `username` varchar(50),
     `alert` varchar(200),
     `dateTime` datetime,
-    FOREIGN KEY(`username`) references `Users`(`username`)
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Posts` (
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS `Posts` (
     `employee` varchar(50),
     `question` varchar(200),
     `answer` varchar(200),
-    FOREIGN KEY(`username`) references `Users`(`username`),
-	FOREIGN KEY(`employee`) references `Users`(`username`)
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE,
+	FOREIGN KEY(`employee`) references `Users`(`username`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
