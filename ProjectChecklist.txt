@@ -26,8 +26,8 @@ II. Browsing and advanced search functionality
 	[] view the list of "similar" items on auctions in the preceding month (and auction information about them)
 [] let user set an alert for specific items s/he is interested  
 	[] get an alert when the item becomes available 
-[] users browse questions and answers 
-[] users search questions by keywords 
+[x] users browse questions and answers 
+[x] users search questions by keywords 
  
 III. Admin and customer rep functions 
 [x] Admin (create an admin account ahead of time) 

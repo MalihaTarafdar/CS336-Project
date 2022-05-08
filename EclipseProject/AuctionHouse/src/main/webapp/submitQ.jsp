@@ -6,39 +6,30 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Submit Question</title>
 </head>
 <body>
-	
-<%	
+	<%	
 	Class.forName("com.mysql.jdbc.Driver");
-	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse", "root", "root");
 	
-	String getPostNum = "Select MAX(postId) from Posts";
-	String curUser = (String)session.getAttribute("user");
+	String user = (String)session.getAttribute("user");
 	
-	String qText = request.getParameter("questionText");
-	PreparedStatement pst = con.prepareStatement("INSERT INTO Posts(postId, username, question) VALUES (?, ?, ?)");
-	int QID = 0;
+	String question = request.getParameter("question");
+	PreparedStatement ps = con.prepareStatement("INSERT INTO Posts(postId, username, question) VALUES (?, ?, ?)");
+
+	Statement mpSt = con.createStatement();
+	ResultSet maxPostId = mpSt.executeQuery("SELECT MAX(postId) FROM Posts");
+	maxPostId.next();
+	int alertId = ((maxPostId.getString(1) != null) ? maxPostId.getInt(1) + 1 : 1);
+	ps.setInt(1, alertId);
 	
-	Statement idSt = con.createStatement();
-	ResultSet getQId = idSt.executeQuery(getPostNum);
-	getQId.next();
-	
-	if(getQId.getInt(1) == 0){
-		QID = 1;
-	}else{
-		QID = getQId.getInt(1) + 1;
-	}
-	
-	pst.setInt(1, QID);
-	pst.setString(2, curUser);
-	pst.setString(3, qText);
-	pst.executeUpdate();
+	ps.setString(2, user);
+	ps.setString(3, question);
+	ps.executeUpdate();
 
 
-	 
 	response.sendRedirect("userViewForum.jsp"); 
-%>
+	%>
 </body>
 </html>

@@ -6,13 +6,12 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Submit Answer</title>
 </head>
 <body>
-	
-<%	
+	<%	
 	Class.forName("com.mysql.jdbc.Driver");
-	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse", "root", "root");
 	
 	String curUser = (String)session.getAttribute("user");
 	int qNum = (int)session.getAttribute("postId");
@@ -22,12 +21,10 @@
 	
 	PreparedStatement pst = con.prepareStatement(updateStr);
 	
-	//Statement answSt = con.createStatement();
-	//answSt.executeQuery(updateStr);
 	pst.executeUpdate();
 	
 	session.removeAttribute("postId");
-	response.sendRedirect("saleRep.jsp"); 
-%>
+	response.sendRedirect("saleRep.jsp");
+	%>
 </body>
 </html>

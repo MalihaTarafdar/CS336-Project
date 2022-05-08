@@ -222,8 +222,6 @@
 	//ALL ACTIVE AUCTIONS
 	
 	//SEARCH AND SORT
-	Statement aSt = con.createStatement();
-	
 	String select = "SELECT * FROM Auction a";
 	String where = "";
 	String orderBy = "";
@@ -284,6 +282,7 @@
 	
 	String query = select + " " + where + " " + orderBy;
 	System.out.println(query);
+	Statement aSt = con.createStatement();
 	ResultSet auctions = aSt.executeQuery(query);
 	
 	out.print("<p><table border=1>");
