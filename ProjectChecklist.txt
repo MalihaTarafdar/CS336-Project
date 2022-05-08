@@ -11,8 +11,8 @@ I. Auctions
 	[] alert other buyers of the item that a higher bid has been placed (manual) 
 	[] alert buyers in case someone bids more than their upper limit (automatic) 
 [x] define the winner of the auction 
-	[] when the closing time has come, check if the seller has set a reserve 
-		[] if yes: if the reserve is higher than the last bid none is the winner. 
+	[x] when the closing time has come, check if the seller has set a reserve 
+		[x] if yes: if the reserve is higher than the last bid none is the winner. 
 		[x] if no: whoever has the higher bid is the winner 
 			[] alert the winner that they won the auction 
 

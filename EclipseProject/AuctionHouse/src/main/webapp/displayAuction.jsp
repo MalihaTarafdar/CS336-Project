@@ -69,20 +69,9 @@
 	float incValue = Float.parseFloat(auction.getString(6));
 	
   	DecimalFormat f = new DecimalFormat("#0.00");
-	DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
-	
-	
-	String d1 = auction.getString(7);
-	String t1[] = d1.split(" ");
-	String why = t1[1];
-	StringBuffer sbf = new StringBuffer(why); //listen I know this looks insane, but like string split or substring wouldnt recognize the .0 in the raw string
-	sbf.deleteCharAt(8);					//its insane, this was the only way to remove the last 2 digits, im losing my mind -JM
-	sbf.deleteCharAt(8);
-	String closeTime = sbf.toString();
-
-	String finalDateTime = t1[0] + " " + closeTime;
-	LocalDateTime closeDate = LocalDateTime.parse(finalDateTime, dateForm);// 5/4: returns as date, will need later for closing stuff and comparisons(or not) 
-	boolean isClosed = LocalDateTime.now().isAfter(closeDate);
+	DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-MM-dd 'at' HH:mm:ss");
+	Timestamp closeTimestamp = auction.getTimestamp(7);
+	boolean isClosed = LocalDateTime.now().isAfter(closeTimestamp.toLocalDateTime());
 	
 	float minPrice = Float.parseFloat(auction.getString(4));
 			
@@ -107,18 +96,18 @@
 	<span style="font-size:20px"><% out.println(((isClosed) ? "Winner" : "Leading Bidder") + ": " + leader); %></span><br/>
 	<%
 	if (isOwnAuction) {%>
-		<span style="font-size:20px"><% out.println("Minimum Price (hidden): $" + f.format(minPrice)); %></span><br/>
+		<span style="font-size:20px"><% out.println("Minimum Price (hidden): " + ((minPrice != -1) ? "$" + f.format(minPrice) : "not provided")); %></span><br/>
 	<%}
 	%>
 	<span style="font-size:20px"><% out.println("Minimum Increment: $" + f.format(incValue)); %></span><br/>
-	<span style="font-size:20px"><% out.println("Close" + ((isClosed) ? "d" : "s") + " on " + t1[0] + " at " + closeTime); %></span><br/>
+	<span style="font-size:20px"><% out.println("Close" + ((isClosed) ? "d" : "s") + " on " + closeTimestamp.toLocalDateTime().format(dateForm)); %></span><br/>
 	</p>
 	
 	<P style="font-size:18px"><%
 	out.println("Auction ID#: " + aucId); %> <br/> <%
 	out.println("ITEM ID#: " + itemId); %> <br/> <%
 	if(item_rs1.getString(2) != null){
-		out.println("Serial Number: " + item_rs1.getString(2));
+		out.println("Serial Number: " + ((item_rs1.getInt(2) != -1) ? item_rs1.getInt(2) : "not provided"));
 		%> <br/> <%
 	}
 	
@@ -133,7 +122,7 @@
 	}
 	
 	if(item_rs1.getString(5) != null){
-		out.println("Year: " + item_rs1.getString(5));
+		out.println("Year: " + ((item_rs1.getInt(5) != -1) ? item_rs1.getInt(5) : "not provided"));
 		%> <br/> <%
 	}
 	
@@ -158,12 +147,12 @@
 	}
 	
 	if(item_rs1.getString(10) != null){
-		out.println("Screen Size: " + item_rs1.getString(10));
+		out.println("Screen Size: " + ((item_rs1.getFloat(10) != -1) ? item_rs1.getFloat(10) : "not provided"));
 		%> <br/> <%
 	}
 	//NEED TO REVIST WHEN A ACTUAL PHONE AUCTION IS IN AUCTION DATABASE
 	if(item_rs1.getString(11) != null){
-		out.println("Touch Screen: " + item_rs1.getString(11));
+		out.println("Touch Screen: " + item_rs1.getBoolean(11));
 		%> <br/> <%
 	}
 	
@@ -173,7 +162,7 @@
 	}
 	
 	if(item_rs1.getString(13) != null){
-		out.println("Storage(GBs): " + item_rs1.getString(13));
+		out.println("Storage(GBs): " + ((item_rs1.getInt(13) != -1) ? item_rs1.getInt(13) : "not provided"));
 		%> <br/> <%
 	}
 	
@@ -186,12 +175,13 @@
 	
 	<%
 	//show buy button for winner
-	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
+	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=? AND amount>=?");
 	ps.setString(1, "" + aucId);
 	ps.setString(2, "" + aucId);
+	ps.setString(3, auction.getString(4));
 	ResultSet winner = ps.executeQuery();
 	ResultSet buyer = st.executeQuery("SELECT username, auctionId FROM Buys WHERE username='" + session.getAttribute("user") + "' AND auctionId=" + aucId);
-	//is top bidder exists, auction is closed, user is winner, and item not already bought
+	//is winner exists, auction is closed, user is winner, and item not already bought
 	if (buyer.next()) {
 	%>
 		<p style="font-size: 20px; color: blue;">You already purchased this item.</p>

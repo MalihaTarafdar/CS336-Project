@@ -40,7 +40,7 @@
     //TODO: alert winner that they won
     //TODO: alert when item becomes available
     
-    out.print("<span style='font-size: 18px;'>Post and View Questions<br>");
+    out.print("<span style='font-size: 18px;'>Post and View Questions</span><br>");
 	out.print("<a href='userViewForum.jsp'>Enter Forum</a><p></p>");
     
     Statement st = con.createStatement();
@@ -67,7 +67,7 @@
 	
 	ResultSetMetaData rsmd = auctions.getMetaData();
 	int colCount = rsmd.getColumnCount();
-	out.println("<P ALIGN='center'><TABLE BORDER=1>");
+	out.println("<P><TABLE BORDER=1>");
 	out.print("<span style='font-size: 18px;'>Your Auctions</span><br>");
 	out.println("<TR>");
 			
@@ -80,7 +80,7 @@
 	out.println("<TH>" + "Closing Date & Time" + "</TH>");
 	
 	DecimalFormat f = new DecimalFormat("#0.00");
-	DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
+	DateTimeFormatter dateForm = DateTimeFormatter.ofPattern("yyyy-MM-dd 'at' HH:mm:ss");
 	//INSERT MAX BID HEADER HERE
 	out.println("<TH>" + "Highest Bid" + "</TH>");
 	 
@@ -88,17 +88,16 @@
 	 // the data
 	while (auctions.next()) {
 		out.println("<TR>");
-	  	for (int i = 0; i < colCount; i++) {
-	    	
-	    	if(i == 0){
-	    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
-	    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(i + 1) + "\"" %> ><%= auctions.getString(i + 1) %></a></TD><% 
-	    		
-	    	}else if(i == 3 || i == 4 || i == 5){
-	    		out.println("<TD>" + "$" + f.format(Float.parseFloat(auctions.getString(i + 1))) + "</TD>");
-	    	}else{
-	    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
+		%><TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(1) + "\"" %> ><%= auctions.getString(1) %></a></TD><%
+	  	for (int i = 2; i <= 7; i++) {
+	    	if (i == 4 || i == 5 || i == 6) {
+	    		out.println("<TD>" + "$" + f.format(Float.parseFloat(auctions.getString(i))) + "</TD>");
+	    	} else if (i == 7) {
+	    		out.println("<TD>" + auctions.getTimestamp(i).toLocalDateTime().format(dateForm) + "</TD>");
+	    	} else {
+	    		out.println("<TD>" + auctions.getString(i) + "</TD>");
 	    	}
+	    	//if (i != 0) System.out.println(i + "\t" + auctions.getString(i));
 	    	
 	    }
 	  	int aucId = Integer.parseInt(auctions.getString(1));
@@ -148,17 +147,14 @@
 	// the data
 	while (auctions.next()) {
 		out.println("<TR>");
-		for (int i = 0; i < colCount; i++) {
-			if(i == 3){
-				i=6;
+		%><TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(1) + "\"" %> ><%= auctions.getString(1) %></a></TD><%
+		for (int i = 2; i <= colCount; i++) {
+			if (i == 4) i = 7;
+			if (i == 7) {
+				out.println("<TD>" + auctions.getTimestamp(i).toLocalDateTime().format(dateForm) + "</TD>");
+			} else {				
+				out.println("<TD>" + auctions.getString(i) + "</TD>");
 			}
-			if(i == 0){
-	    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
-	    		%> <TD><a href=<%= "\"displayAuction.jsp?Id=" + auctions.getString(i + 1) + "\"" %> ><%= auctions.getString(i + 1) %></a></TD><%
-	    		//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
-	    	}else{
-	    		out.println("<TD>" + auctions.getString(i + 1) + "</TD>");
-	    	}
 		}
 		int aucId = Integer.parseInt(auctions.getString(1));
 		PreparedStatement ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
@@ -205,8 +201,8 @@
 	out.println("<TH>" + "Your bid" + "</TH>");
 	out.println("<TH>" + "Highest bid" + "</TH>");
 	out.println("<TH>" + "Leading User" + "</TH>");
-	out.println("<TH>" + "Closing Date" + "</TH>");
-	out.println("<TH>" + "Closing time" + "</TH>");
+	out.println("<TH>" + "Closing Date & Time" + "</TH>");
+	out.println("<TH>" + "Closed?" + "</TH>");
 	out.println("<TH>" + "Auto Bid" + "</TH>");
 	
 	
@@ -250,23 +246,16 @@
 				  	
 				  	out.println("<TD>" + "$" + f.format(maxBidNum) + "</TD>");
 				  	out.println("<TD>" + leadingBidder + "</TD>");
-		    	}else if(i == 4){
+		    	} else if (i == 4) {
+		    		Timestamp closeTimestamp = yourBids.getTimestamp(i);
+		    		boolean isClosed = LocalDateTime.now().isAfter(closeTimestamp.toLocalDateTime());
 		    		
-		    		String date = yourBids.getString(i);
-		    		StringBuffer sbf = new StringBuffer(date); 
-		    		sbf.deleteCharAt(19);
-		    		sbf.deleteCharAt(19);
-		    		String closeTime = sbf.toString();
-		    		String dt[] = closeTime.split(" ");
-		    		LocalDateTime closeDate = LocalDateTime.parse(closeTime, dateForm);
-		    		LocalDateTime curTime = LocalDateTime.now();
+		    		out.println("<TD>" + closeTimestamp.toLocalDateTime().format(dateForm) + "</TD>");
 		    		
-		    		if(curTime.isAfter(closeDate)){
+		    		if (isClosed) {
 		    			out.println("<TD>" + "CLOSED" + "</TD>");
-			    		out.println("<TD>" + "CLOSED" + "</TD>");
-		    		}else{
-		    			out.println("<TD>" + dt[0] + "</TD>");
-		    			out.println("<TD>" + dt[1] + "</TD>");
+		    		} else {
+		    			out.println("<TD>" + "OPEN" + "</TD>");
 		    		}
 		    		
 		    	}else if(i == 5){

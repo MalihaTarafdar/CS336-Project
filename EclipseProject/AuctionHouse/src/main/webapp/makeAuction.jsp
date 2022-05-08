@@ -216,19 +216,20 @@
 		   itemID = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemID for electronics query
     } 
     if(newItem){
-	    item_statement.setString(1, "" + itemID);
-	    item_statement.setString(2, request.getParameter("serialNum"));
-	    item_statement.setString(3, request.getParameter("brand"));
-	    item_statement.setString(4, request.getParameter("model"));
-	    item_statement.setString(5, request.getParameter("year"));
-	    item_statement.setString(6, request.getParameter("cpu"));
-	    item_statement.setString(7, request.getParameter("gpu"));
-	    item_statement.setString(8, request.getParameter("ram"));
-	    item_statement.setString(9, request.getParameter("size"));
-	    item_statement.setString(10, request.getParameter("touch"));
-	    item_statement.setString(11, request.getParameter("camera"));
-	    item_statement.setString(12, request.getParameter("storage"));
-	    item_statement.setString(13, request.getParameter("chip"));
+	    //TODO: clean up
+    	item_statement.setString(1, "" + itemID);
+	    item_statement.setString(2, (request.getParameter("serialNum") != null && !request.getParameter("serialNum").isEmpty()) ? request.getParameter("serialNum") : "-1");
+	    item_statement.setString(3, (request.getParameter("brand") != null && !request.getParameter("brand").isEmpty()) ? request.getParameter("brand") : "not provided");
+	    item_statement.setString(4, (request.getParameter("model") != null && !request.getParameter("model").isEmpty()) ? request.getParameter("model") : "not provided");
+	    item_statement.setString(5, (request.getParameter("year") != null && !request.getParameter("year").isEmpty()) ? request.getParameter("year") : "-1");
+	    item_statement.setString(6, (request.getParameter("cpu") != null && !request.getParameter("cpu").isEmpty()) ? request.getParameter("cpu") : "not provided");
+	    item_statement.setString(7, (request.getParameter("gpu") != null && !request.getParameter("gpu").isEmpty()) ? request.getParameter("gpu") : "not provided");
+	    item_statement.setString(8, (request.getParameter("ram") != null && !request.getParameter("ram").isEmpty()) ? request.getParameter("ram") : "not provided");
+	    item_statement.setString(9, (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) ? request.getParameter("size") : "-1");
+	    item_statement.setString(10, (request.getParameter("touch") != null && !request.getParameter("touch").isEmpty()) ? request.getParameter("touch") : "0");
+	    item_statement.setString(11, (request.getParameter("camera") != null && !request.getParameter("camera").isEmpty()) ? request.getParameter("camera") : "not provided");
+	    item_statement.setString(12, (request.getParameter("storage") != null && !request.getParameter("storage").isEmpty()) ? request.getParameter("storage") : "-1");
+	    item_statement.setString(13, (request.getParameter("chip") != null && !request.getParameter("chip").isEmpty()) ? request.getParameter("chip") : "not provided");
 	   	item_statement.executeUpdate();
     }     
     Statement st = con.createStatement();
@@ -244,7 +245,7 @@
     
     pst.setString(2, request.getParameter("itemName"));
     
-	pst.setString(3, request.getParameter("minPrice"));
+	pst.setString(3, (request.getParameter("minPrice") != null && !request.getParameter("minPrice").isEmpty()) ? request.getParameter("minPrice") : "-1");
 	pst.setString(4, request.getParameter("initialPrice"));
 	pst.setString(5, request.getParameter("bidIncrement"));
 	pst.setString(6, request.getParameter("closeDateTime"));
