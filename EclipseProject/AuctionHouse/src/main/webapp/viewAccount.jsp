@@ -20,6 +20,11 @@
 	%>
 	<meta charset="ISO-8859-1">
 	<title>View Account | <%=user%></title>
+	<style>
+		td {
+			text-align: center;
+		}
+	</style>
 </head>
 <body>
 	<%

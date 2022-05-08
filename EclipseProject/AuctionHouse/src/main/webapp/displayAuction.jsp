@@ -14,6 +14,9 @@
 		span {
 			font-size: 20px;
 		}
+		td {
+			text-align: center;
+		}
 	</style>
 	<%
 	Class.forName("com.mysql.jdbc.Driver");
@@ -193,15 +196,63 @@
 	
 	
 	
-	<%//BID HISTORY%>
+	<%
+	//SIMILAR ITEMS IN THE LAST MONTH
+	String query = "SELECT a.* FROM Auction a, Electronics e " +
+			"WHERE closeDateTime BETWEEN date_sub(now(), INTERVAL 1 MONTH) AND now() AND " +
+			"e.type = '" + item.getString(15) + "' AND a.itemId != " + itemId + " AND " +
+			"a.itemId = e.itemId";
+	//System.out.println(query);
+	ps = con.prepareStatement(query);
+	ResultSet similarItems = ps.executeQuery();
 	
+	out.print("<span>Similar Items</span>");
+	out.print("<table border=1>");
+	
+	out.print("<tr>");
+	out.print("<th>Auction ID#</th>");
+	out.print("<th>Item ID#</th>");
+	out.print("<th>Item Name</th>");
+	out.print("<th>Price</th>");
+	out.print("<tr>");
+	
+	while (similarItems.next()) {
+		int sAuctionId = similarItems.getInt(1);
+		int sItemId = similarItems.getInt(2);
+		String sItemName = similarItems.getString(3);
+		float sInitialPrice = similarItems.getFloat(5);
+		
+		out.print("<tr>");
+		
+		out.print("<td><a href='displayAuction.jsp?Id=" + sAuctionId + "'>" + sAuctionId + "</a></td>");
+		out.print("<td>" + sItemId + "</td>");
+		out.print("<td>" + sInitialPrice + "</td>");
+		
+		ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId = ?");
+	  	ps.setInt(1, sAuctionId);
+	  	ResultSet sMaxBid = ps.executeQuery();
+	  	sMaxBid.next();
+	  	float sMaxBidAmount = sMaxBid.getFloat(1);
+	  	out.print("<td>" + ((sMaxBidAmount > 0) ? currencyFormat.format(sMaxBidAmount) : currencyFormat.format(sInitialPrice)) + "</td>");
+	  	
+	  	out.print("</tr>");
+	}
+	
+	out.print("</table><br/>");
+	
+	
+	
+	
+	
+	//BID HISTORY
+	%>
 	<span>Bid History</span>
 	<table border=1>
 		<tr>
 			<th>User</th>
 			<th>Amount</th>
 		</tr>
-		<%
+	<%
 		ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE auctionId=? ORDER BY bidId DESC");
 		ps.setInt(1, auctionId);
 		ResultSet bidHistory = ps.executeQuery();
@@ -214,7 +265,7 @@
 			out.print("<td>" + currencyFormat.format(bidAmount) + "</td>");
 			out.print("</tr>");
 		}
-		%>
+	%>
 	</table>
 </body>
 </html>

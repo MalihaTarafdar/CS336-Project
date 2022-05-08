@@ -125,7 +125,7 @@
     Statement raSt = con.createStatement();
 	ResultSet recentAlerts = raSt.executeQuery(
 			"SELECT * FROM Alerts WHERE username = '" + session.getAttribute("user") + "' " +
-			"AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now() ORDER BY dateTime DESC");
+			"AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) AND now() ORDER BY dateTime DESC");
 	
     out.print("<span>Recent Alerts</span> (within the last week)");
     
@@ -146,7 +146,7 @@
         	
         	out.print("<tr>");
         	out.print("<td>" + dateTime.toLocalDateTime().format(dateFormatter) + "</td>");
-        	out.print("<td>" + alert + "</td>");
+        	out.print("<td style='text-align: left;'>" + alert + "</td>");
         	out.print("</tr>");
         } while (recentAlerts.next());
         
@@ -279,7 +279,7 @@
 	}
 	
 	String query = select + " " + where + " " + orderBy;
-	System.out.println(query);
+	//System.out.println(query);
 	Statement aSt = con.createStatement();
 	ResultSet auctions = aSt.executeQuery(query);
 	
@@ -332,6 +332,7 @@
 		float initialPrice = auctions.getFloat(5);
 		Timestamp closeDateTime = auctions.getTimestamp(7);
 		
+		out.print("<tr>");
 		out.print("<td><a href='displayAuction.jsp?Id=" + auctionId + "'>" + auctionId + "</a></td>");
 		out.print("<td>" + itemId + "</td>");
 		out.print("<td>" + itemName + "</td>");

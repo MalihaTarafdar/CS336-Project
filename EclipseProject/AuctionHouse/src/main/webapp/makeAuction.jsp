@@ -21,7 +21,7 @@
     
     //insert into electronics, any paramaters that dont exist are null
     PreparedStatement item_statement = con.prepareStatement(
-    		"INSERT INTO Electronics(itemId, serialNumber, brand, model, year, cpu, gpu, ram, screenSize, touchScreen, camera, storage, chip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    		"INSERT INTO Electronics(itemId, serialNumber, brand, model, year, powerSupply, cpu, gpu, ram, screenSize, touchScreen, camera, storage, chip, type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 	
     //insert into sells
     PreparedStatement sell_statement = con.prepareStatement(
@@ -210,19 +210,21 @@
     } 
     if(newItem){
 	    //TODO: clean up
-    	item_statement.setString(1, "" + itemId);
+    	item_statement.setInt(1, itemId);
 	    item_statement.setString(2, (request.getParameter("serialNum") != null && !request.getParameter("serialNum").isEmpty()) ? request.getParameter("serialNum") : "-1");
 	    item_statement.setString(3, (request.getParameter("brand") != null && !request.getParameter("brand").isEmpty()) ? request.getParameter("brand") : "not provided");
 	    item_statement.setString(4, (request.getParameter("model") != null && !request.getParameter("model").isEmpty()) ? request.getParameter("model") : "not provided");
 	    item_statement.setString(5, (request.getParameter("year") != null && !request.getParameter("year").isEmpty()) ? request.getParameter("year") : "-1");
-	    item_statement.setString(6, (request.getParameter("cpu") != null && !request.getParameter("cpu").isEmpty()) ? request.getParameter("cpu") : "not provided");
-	    item_statement.setString(7, (request.getParameter("gpu") != null && !request.getParameter("gpu").isEmpty()) ? request.getParameter("gpu") : "not provided");
-	    item_statement.setString(8, (request.getParameter("ram") != null && !request.getParameter("ram").isEmpty()) ? request.getParameter("ram") : "not provided");
-	    item_statement.setString(9, (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) ? request.getParameter("size") : "-1");
-	    item_statement.setString(10, (request.getParameter("touch") != null && !request.getParameter("touch").isEmpty()) ? request.getParameter("touch") : "0");
-	    item_statement.setString(11, (request.getParameter("camera") != null && !request.getParameter("camera").isEmpty()) ? request.getParameter("camera") : "not provided");
-	    item_statement.setString(12, (request.getParameter("storage") != null && !request.getParameter("storage").isEmpty()) ? request.getParameter("storage") : "-1");
-	    item_statement.setString(13, (request.getParameter("chip") != null && !request.getParameter("chip").isEmpty()) ? request.getParameter("chip") : "not provided");
+	    item_statement.setString(6, (request.getParameter("powerSupply") != null && !request.getParameter("powerSupply").isEmpty()) ? request.getParameter("powerSupply") : "not provided");
+	    item_statement.setString(7, (request.getParameter("cpu") != null && !request.getParameter("cpu").isEmpty()) ? request.getParameter("cpu") : "not provided");
+	    item_statement.setString(8, (request.getParameter("gpu") != null && !request.getParameter("gpu").isEmpty()) ? request.getParameter("gpu") : "not provided");
+	    item_statement.setString(9, (request.getParameter("ram") != null && !request.getParameter("ram").isEmpty()) ? request.getParameter("ram") : "not provided");
+	    item_statement.setString(10, (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) ? request.getParameter("size") : "-1");
+	    item_statement.setString(11, (request.getParameter("touch") != null && !request.getParameter("touch").isEmpty()) ? request.getParameter("touch") : "0");
+	    item_statement.setString(12, (request.getParameter("camera") != null && !request.getParameter("camera").isEmpty()) ? request.getParameter("camera") : "not provided");
+	    item_statement.setString(13, (request.getParameter("storage") != null && !request.getParameter("storage").isEmpty()) ? request.getParameter("storage") : "-1");
+	    item_statement.setString(14, (request.getParameter("chip") != null && !request.getParameter("chip").isEmpty()) ? request.getParameter("chip") : "not provided");
+	    item_statement.setString(15, request.getParameter("type"));
 	   	item_statement.executeUpdate();
     }     
     Statement st = con.createStatement();

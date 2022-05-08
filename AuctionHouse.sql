@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS `Electronics` (
     `touchScreen` bool,
     `camera`  varchar(50),
     `storage` int,
-    `chip`  varchar(50)
+    `chip`  varchar(50),
+    `type` varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `Sells` (
