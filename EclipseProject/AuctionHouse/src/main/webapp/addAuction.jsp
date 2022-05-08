@@ -15,7 +15,7 @@
 	<a href="main.jsp">Return</a><br/><br/>
 	
 	<form action="makeAuction.jsp">
-		<input type="hidden" name="type"/>
+		<input type="hidden" name="type" value="<%=type%>"/>
 		Item Name: <input type="text" name="itemName" required/><br/>
 		Serial Number: <input type="text" name="serialNum"/><br/>
 		Brand: <input type="text" name="brand"/><br/>

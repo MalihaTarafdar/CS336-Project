@@ -151,7 +151,7 @@
     //ALERTS
 
     //alert previous max bidder (manual bid) that a higher bid has been placed
-    if (maxBidUpperLimit <= 0 && !maxBidUser.equals(username)) {
+    if (maxBidUser != null && maxBidUpperLimit <= 0 && !maxBidUser.equals(username)) {
 		ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
     	
 		Statement maSt = con.createStatement();

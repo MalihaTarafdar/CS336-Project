@@ -54,6 +54,7 @@
 			<span style="font-size:16px">Enter Auction # to Delete</span><br/>
 			<input type="text" id="aucId" name="aucId">
 			<input type="submit" name="Delete" value="Delete"/>
+			<input type="hidden" name="husr" value="<%=user %>"/>
 		</form>
 		
 		
@@ -91,7 +92,7 @@
 			Timestamp closeDateTime = auctions.getTimestamp(7);
 			
 			out.print("<tr>");
-			out.print("<td><a href='displayAuction.jsp?Id=" + auctionId + "'>" + auctionId + "</a></td>");
+			out.print("<td>" + auctionId + "</td>");
 			out.print("<td>" + itemId + "</td>");
 			out.print("<td>" + itemName + "</td>");
 			out.print("<td>" + currencyFormat.format(initialPrice) + "</td>");
@@ -120,6 +121,7 @@
 			<span style="font-size:16px">Enter Bid # to Delete</span><br/>
 			<input type="text" id="bidId" name="bidId">
 			<input type="submit" name="Delete" value="Delete"/>
+			<input type="hidden" name="husr" value="<%=user %>"/>
 		</form>
 		
 		
@@ -155,7 +157,7 @@
 			float increment = bids.getFloat(6);
 			
 			out.print("<tr>");
-			out.print("<td><a href='displayAuction.jsp?Id=" + auctionId + "'>" + auctionId + "</a></td>");
+			out.print("<td" + auctionId + "</td>");
 			out.print("<td>" + itemName + "</td>");
 			out.print("<td>" + currencyFormat.format(amount) + "</td>");
 			

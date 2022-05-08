@@ -38,11 +38,13 @@
     String gpu = request.getParameter("gpu");
     String ram = request.getParameter("ram");
     String screenSize = request.getParameter("size");
+    //String touch = request.getParameter("touch");
     String touch = request.getParameter("touch");
+    
     String cam = request.getParameter("camera");
     String storage = request.getParameter("storage");
     String chip = request.getParameter("chip");
-    
+    boolean tsc = false;
 
     if(sn == null){
     	sn = "IS NULL";
@@ -68,8 +70,11 @@
     if(screenSize == null){
     	screenSize = "IS NULL";
     }
-    if(touch == null){
+    if(touch.equals("off")){
     	touch = "IS NULL";
+    	tsc = false;
+    }else{
+    	tsc = true;
     }
     if(cam == null){
     	cam = "IS NULL";
@@ -146,9 +151,9 @@
     							
     							if(checkSet.next() ){
     								if(touch.equals("IS NULL")){
-                            			checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen " + touch + "");
+                            			checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen " + tsc + "");
                         	    	}else{
-                        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = '" + touch + "'");
+                        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = '" + tsc + "'");
                         	    	}
     								
     								if(checkSet.next() ){
@@ -220,7 +225,7 @@
 	    item_statement.setString(8, (request.getParameter("gpu") != null && !request.getParameter("gpu").isEmpty()) ? request.getParameter("gpu") : "not provided");
 	    item_statement.setString(9, (request.getParameter("ram") != null && !request.getParameter("ram").isEmpty()) ? request.getParameter("ram") : "not provided");
 	    item_statement.setString(10, (request.getParameter("size") != null && !request.getParameter("size").isEmpty()) ? request.getParameter("size") : "-1");
-	    item_statement.setString(11, (request.getParameter("touch") != null && !request.getParameter("touch").isEmpty()) ? request.getParameter("touch") : "0");
+	    item_statement.setBoolean(11, tsc);
 	    item_statement.setString(12, (request.getParameter("camera") != null && !request.getParameter("camera").isEmpty()) ? request.getParameter("camera") : "not provided");
 	    item_statement.setString(13, (request.getParameter("storage") != null && !request.getParameter("storage").isEmpty()) ? request.getParameter("storage") : "-1");
 	    item_statement.setString(14, (request.getParameter("chip") != null && !request.getParameter("chip").isEmpty()) ? request.getParameter("chip") : "not provided");

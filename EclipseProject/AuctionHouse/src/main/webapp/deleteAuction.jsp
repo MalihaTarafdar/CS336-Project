@@ -16,14 +16,14 @@
 <% 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
 	int editId = Integer.parseInt(request.getParameter("aucId"));
-	
+	String user = (String)request.getParameter("husr");
 	
 	String req = "DELETE FROM auction WHERE auctionId = '" + editId + "'";
 	
 	PreparedStatement pst = con.prepareStatement(req);
 	pst.executeUpdate();
 	
-	response.sendRedirect("editAccount.jsp");
+	response.sendRedirect("editAccount.jsp?usr=" + user);
 %>
 
 

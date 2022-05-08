@@ -73,7 +73,7 @@
 	
 	out.print("<span style='font-size:24px;'>Auction of " + itemName + "</span><br/>");
 	out.print("<span style='color: #3D8A30;'>" +
-			((maxBidUser != null) ?
+			((maxBidUser != null && maxBidAmount > 0) ?
 			"Current Bid: " + currencyFormat.format(maxBidAmount) :
 			"Starting Bid: " + currencyFormat.format(initialPrice)) + "</span><br/>");
 	
@@ -122,15 +122,33 @@
 	out.print("Brand: " + ((item.getString(3) != null) ? item.getString(3) : "not provided") + "<br/>");
 	out.print("Model: " + ((item.getString(4) != null) ? item.getString(4) : "not provided") + "<br/>");
 	out.print("Year: " + ((item.getInt(5) > 0) ? item.getInt(5) : "not provided") + "<br/>");
-	out.print("Power Supply: " + ((item.getString(6) != null) ? item.getString(6) : "not provided") + "<br/>");
-	out.print("CPU: " + ((item.getString(7) != null) ? item.getString(7) : "not provided") + "<br/>");
-	out.print("GPU: " + ((item.getString(8) != null) ? item.getString(8) : "not provided") + "<br/>");
-	out.print("RAM: " + ((item.getString(9) != null) ? item.getString(9) : "not provided") + "<br/>");
-	out.print("Screen Size: " + ((item.getFloat(10) > 0) ? item.getFloat(10) : "not provided") + "<br/>");
-	out.print("Touch Screen: " + item.getBoolean(11) + "<br/>");
-	out.print("Camera: " + ((item.getString(12) != null) ? item.getString(12) : "not provided") + "<br/>");
-	out.print("Storage (GB): " + ((item.getInt(13) > 0) ? item.getInt(13) : "not provided") + "<br/>");
-	out.print("Chip: " + ((item.getString(14) != null) ? item.getString(14) : "not provided") + "<br/>");
+	//out.print("Power Supply: " + ((item.getString(6) != null) ? item.getString(6) : "not provided") + "<br/>");
+	//out.print("CPU: " + ((item.getString(7) != null) ? item.getString(7) : "not provided") + "<br/>");
+	//out.print("GPU: " + ((item.getString(8) != null) ? item.getString(8) : "not provided") + "<br/>");
+	//out.print("RAM: " + ((item.getString(9) != null) ? item.getString(9) : "not provided") + "<br/>");
+	//out.print("Screen Size: " + ((item.getFloat(10) > 0) ? item.getFloat(10) : "not provided") + "<br/>");
+	//out.print("Touch Screen: " + item.getBoolean(11) + "<br/>");
+	//out.print("Camera: " + ((item.getString(12) != null) ? item.getString(12) : "not provided") + "<br/>");
+	//out.print("Storage (GB): " + ((item.getInt(13) > 0) ? item.getInt(13) : "not provided") + "<br/>");
+	//out.print("Chip: " + ((item.getString(14) != null) ? item.getString(14) : "not provided") + "<br/>");
+	
+	if(item.getString(15).equals("PC")){
+		out.print("CPU: " + ((item.getString(7) != null) ? item.getString(7) : "not provided") + "<br/>");
+		out.print("GPU: " + ((item.getString(8) != null) ? item.getString(8) : "not provided") + "<br/>");
+		out.print("RAM: " + ((item.getString(9) != null) ? item.getString(9) : "not provided") + "<br/>");
+			
+	}else if(item.getString(15).equals("Laptop/Tablet")){
+		out.print("CPU: " + ((item.getString(7) != null) ? item.getString(7) : "not provided") + "<br/>");
+		out.print("GPU: " + ((item.getString(8) != null) ? item.getString(8) : "not provided") + "<br/>");
+		out.print("RAM: " + ((item.getString(9) != null) ? item.getString(9) : "not provided") + "<br/>");
+		out.print("Screen Size: " + ((item.getFloat(10) > 0) ? item.getFloat(10) : "not provided") + "<br/>");
+		out.print("Touch Screen: " + item.getBoolean(11) + "<br/>");
+	}else if(item.getString(15).equals("Phone")){
+		out.print("Screen Size: " + ((item.getFloat(10) > 0) ? item.getFloat(10) : "not provided") + "<br/>");
+		out.print("Camera: " + ((item.getString(12) != null) ? item.getString(12) : "not provided") + "<br/>");
+		out.print("Storage (GB): " + ((item.getInt(13) > 0) ? item.getInt(13) : "not provided") + "<br/>");
+		out.print("Chip: " + ((item.getString(14) != null) ? item.getString(14) : "not provided") + "<br/>");
+	}
 	
 	out.print("</p>");
 	
