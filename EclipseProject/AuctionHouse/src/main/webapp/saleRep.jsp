@@ -62,7 +62,7 @@
 			%><br><span style="font-size:16px"><% out.print("Question ID#: " + unanswered_posts.getInt(1));%></span> <%
 			%><br><span style="font-size:16px"><% out.print("Question: " + unanswered_posts.getString(2));%></span></br> <%
 			%><form action="submitA.jsp" method="post">
-			<textarea id="answerText" name="answerText" rows="4" cols="70" maxlength="199">Answer Question</textarea></br>
+			<textarea id="answerText" name="answerText" rows="4" cols="70" maxlength="199" placeholder="Answer Question"></textarea></br>
 			<%session.setAttribute("postId", unanswered_posts.getInt(1)); %>
 			<input type="submit" value="Submit">
 			</form> 

@@ -8,8 +8,8 @@ I. Auctions
 [x] a buyer should be able to bid
 	[x] let the buyer set a new bid 
 	[x] in case of automatic bidding set secret upper limit and bid increment 
-	[] alert other buyers of the item that a higher bid has been placed (manual) 
-	[] alert buyers in case someone bids more than their upper limit (automatic) 
+	[x] alert other buyers of the item that a higher bid has been placed (manual) 
+	[x] alert buyers in case someone bids more than their upper limit (automatic) 
 [x] define the winner of the auction 
 	[x] when the closing time has come, check if the seller has set a reserve 
 		[x] if yes: if the reserve is higher than the last bid none is the winner. 
