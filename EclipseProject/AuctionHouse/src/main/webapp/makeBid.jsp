@@ -27,7 +27,7 @@
     ResultSet auction = ps.executeQuery();
     auction.next();
     //get highest bid
-    ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
+    ps = con.prepareStatement("SELECT amount, username, upperLimit FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
   	ps.setString(1, "" + aucId);
   	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
@@ -51,16 +51,17 @@
 		if (request.getParameter("autobidbutton") != null && amount != -1 && upperLimit != -1 && bidIncrement != -1) { //autobid
 			if (amount > upperLimit) {
 		    	out.print("Amount cannot be higher than upper limit. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
+		    } else {
+		    	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, username, auctionId, increment, bidId) VALUES (?, ?, ?, ?, ?, ?)");
+	       	    bidsStmt.setString(1, "" + amount);
+	       	    bidsStmt.setString(2, "" + upperLimit);
+	       	    bidsStmt.setString(3, username);
+	       	    bidsStmt.setString(4, aucId);
+	       	    bidsStmt.setString(5, "" + bidIncrement);
+	    		bidsStmt.setString(6, "" + bidId);
+	       	    bidsStmt.executeUpdate();
+	       	    out.print("AutoBid placed successfully! <a href='main.jsp'>Close.</a>");
 		    }
-           	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, username, auctionId, increment, bidId) VALUES (?, ?, ?, ?, ?, ?)");
-       	    bidsStmt.setString(1, "" + amount);
-       	    bidsStmt.setString(2, "" + upperLimit);
-       	    bidsStmt.setString(3, username);
-       	    bidsStmt.setString(4, aucId);
-       	    bidsStmt.setString(5, "" + bidIncrement);
-    		bidsStmt.setString(6, "" + bidId);
-       	    bidsStmt.executeUpdate();
-       	    out.print("AutoBid placed successfully! <a href='main.jsp'>Close.</a>");
 		} else if (request.getParameter("bidbutton") != null && amount != -1) { //normal bid
         	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, username, auctionId, bidId) VALUES (?, ?, ?, ?)");
         	bidsStmt.setString(1, "" + amount);
@@ -73,6 +74,25 @@
         	out.print("Bid not entered correctly. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
         }
 	}
+    
+    //alert previous max bidder (manual bid) that a higher bid has been placed
+    if (maxBid.getString(3) == null) {
+		ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
+    	
+    	Statement st1 = con.createStatement();
+    	Statement st2 = con.createStatement();
+    	ResultSet rs1 = st1.executeQuery("SELECT MAX(alertId) FROM Alerts");
+		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Alerts");
+		rs1.next();
+		rs2.next();
+		int alertId = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(alertId)") + 1 : 1);
+		ps.setString(1, "" + alertId);
+		
+		ps.setString(2, maxBid.getString(2));
+		ps.setString(3, "A higher bid than yours has been placed on <a href='displayAuction.jsp?Id=" + aucId + "'>Auction " + aucId + "</a>.");
+		ps.setString(4, LocalDateTime.now().toString());
+		ps.executeUpdate();
+    }
     
     
     //update automatic bids
@@ -146,8 +166,31 @@
 		ps.setString(4, LocalDateTime.now().toString());
 		ps.executeUpdate();
     }
+    
+    
+    //alert automatic bidders that someone has bid higher than their upper limit
+    Statement st = con.createStatement();
+    ResultSet autoBidders = st.executeQuery(
+	    		"SELECT username FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId +
+	    		" AND NOT username='" + maxBid.getString(2) + "' AND upperLimit IS NOT NULL GROUP BY USERNAME)");
+    while (autoBidders.next()) {
+		ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
+    	
+	   	Statement st1 = con.createStatement();
+	   	Statement st2 = con.createStatement();
+	   	ResultSet rs1 = st1.executeQuery("SELECT MAX(alertId) FROM Alerts");
+		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Alerts");
+		rs1.next();
+		rs2.next();
+		int alertId = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(alertId)") + 1 : 1);
+		ps.setString(1, "" + alertId);
+		
+		ps.setString(2, autoBidders.getString(1));
+		ps.setString(3, "Someone has bid higher than your upper limit on <a href='displayAuction.jsp?Id=" + aucId + "'>Auction " + aucId + "</a>.");
+		ps.setString(4, LocalDateTime.now().toString());
+		ps.executeUpdate();
+    }
 	%>
-	
 	
 	
 	

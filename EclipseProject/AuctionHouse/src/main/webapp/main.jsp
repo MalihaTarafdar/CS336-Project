@@ -39,7 +39,6 @@
 				
 	<%
 	//TODO: alert auto bidders when upperLimit reached
-    //TOOD: alert normal bidders when surpassed
     //TODO: alert when item becomes available
     
     PreparedStatement ps;
@@ -53,7 +52,8 @@
     		"WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE username='" + session.getAttribute("user") + "' GROUP BY username, auctionId) " +
     		"AND b.auctionId = a.auctionId");
     while (activeBids.next()) {
-    	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=? AND amount>=?");
+    	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=? AND amount>=? AND username='" +
+    		session.getAttribute("user") + "'");
     	ps.setInt(1, activeBids.getInt(1));
     	ps.setInt(2, activeBids.getInt(1));
     	ps.setFloat(3, activeBids.getFloat(2));
