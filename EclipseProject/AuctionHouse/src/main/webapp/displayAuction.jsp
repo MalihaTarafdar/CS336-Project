@@ -219,7 +219,7 @@
 			<li>Auto-bid: fill out amount, upper limit, and increment</li>
 			<li>Normal bid: fill out amount</li>
 		</ul>
-		<form method="POST" action=<%= "\"makeBid.jsp?Id=" + aucId + "\""%>>
+		<form method="POST" action="makeBid.jsp?Id=<%=aucId%>">
 			Amount: <input type="text" name="amount"/> <br/>
 			Upper Limit: <input type="text" name="upperLimit"/> <br/>
 			Increment: <input type="text" name="bidIncrement"/> <br/>

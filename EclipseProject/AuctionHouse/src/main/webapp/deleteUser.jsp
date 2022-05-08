@@ -12,12 +12,20 @@
 	<%
 	Class.forName("com.mysql.jdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
+    
+    String user = request.getParameter("user");
+    
 	PreparedStatement pst = con.prepareStatement("DELETE FROM Users WHERE username=?");
-	pst.setString(1, session.getAttribute("user").toString());
+	pst.setString(1, user);
 	pst.executeUpdate();
 	
-	session.invalidate();
-	response.sendRedirect("index.jsp");
+	if (user.equals(session.getAttribute("user"))) {		
+		session.invalidate();
+		response.sendRedirect("index.jsp");
+	} else {
+		out.println("User account deleted successfully.");
+		out.print("<a href='viewAccount.jsp?usr=" + user + "'>Return</a>");
+	}
 	%>
 </body>
 </html>

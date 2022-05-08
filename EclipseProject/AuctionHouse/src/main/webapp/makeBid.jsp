@@ -31,13 +31,10 @@
   	ps.setString(1, "" + aucId);
   	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
-  	maxBid.next();
-  	float price = (maxBid.getString(1) != null) ? Float.parseFloat(maxBid.getString(1)) : Float.parseFloat(auction.getString(5));
+  	float price = (maxBid.next() && maxBid.getString(1) != null) ? maxBid.getFloat(1) : auction.getFloat(5);
     //reject bid if (less than highest bid + bidIncrement) or (if amount is more than upper limit)
-    if (amount < price + Float.parseFloat(auction.getString(6))) {
+    if (amount < price + auction.getFloat(6)) {
     	out.print("Bid not high enough. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
-    } else if (amount > upperLimit) {
-    	out.print("Amount cannot be higher than upper limit. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
     } else {
     	Statement st1 = con.createStatement();
     	Statement st2 = con.createStatement();
@@ -52,6 +49,9 @@
 		ps.setString(2, username);
 		ResultSet bids = ps.executeQuery();
 		if (request.getParameter("autobidbutton") != null && amount != -1 && upperLimit != -1 && bidIncrement != -1) { //autobid
+			if (amount > upperLimit) {
+		    	out.print("Amount cannot be higher than upper limit. <a href='displayAuction.jsp?Id=" + aucId + "'>Try again.</a>");
+		    }
            	PreparedStatement bidsStmt = con.prepareStatement("INSERT INTO Bids(amount, upperLimit, username, auctionId, increment, bidId) VALUES (?, ?, ?, ?, ?, ?)");
        	    bidsStmt.setString(1, "" + amount);
        	    bidsStmt.setString(2, "" + upperLimit);
@@ -87,13 +87,12 @@
 	  	ps.setString(1, "" + aucId);
 	  	ps.setString(2, "" + aucId);
 	  	maxBid = ps.executeQuery();
-	  	maxBid.next();
+	  	if (!maxBid.next()) break;
 	  	float maxAmount = (maxBid.getString(1) != null) ? Float.parseFloat(maxBid.getString(1)) : -1;
 	  	
 	  	//PreparedStatement does not allow parameters inside single quotes
 	  	Statement st = con.createStatement();
-	    ResultSet bids = st.executeQuery(
-	    		"SELECT * FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId + " AND NOT username='" + maxBid.getString(2) + "' GROUP BY USERNAME)");
+	    ResultSet bids = st.executeQuery("SELECT * FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId + " AND NOT username='" + maxBid.getString(2) + "' GROUP BY USERNAME)");
 	    while (bids.next()) {
 	    	float aucBidIncrement = Float.parseFloat(auction.getString(6));
 	    	float bidsAmount = Float.parseFloat(bids.getString(1));

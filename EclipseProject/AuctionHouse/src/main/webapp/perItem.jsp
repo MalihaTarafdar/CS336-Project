@@ -45,8 +45,11 @@
 		out.println("<TD>" + itemDetails.getString(3) + "</TD>");
 		
 		
-		earningsPerItem.next();
-		out.println("<TD>" + "$" + f.format(earningsPerItem.getFloat(2)) + "</TD>");
+		if (earningsPerItem.next()) {			
+			out.println("<TD>" + "$" + f.format(earningsPerItem.getFloat(2)) + "</TD>");
+		} else {
+			out.println("<TD>$0.00</TD>");
+		}
 		
 		out.println("</TR>");
 	}

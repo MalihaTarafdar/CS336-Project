@@ -20,18 +20,25 @@
 %>	
 	<span style="font-size:24px"><%out.println("Edit User");%></span><br><p>
 	<form action="editUser.jsp">
-	<span style="font-size:16px">Change Username, Password or Both of Account</span><br>
-	New Username: <input type="text" name="username"/><br/>
-	New Password: <input type="text" name="password"/><br/>
-	<% session.setAttribute("usrr", editUser); %>
-	<input type="submit" name="Update" value="Update"/>
+		<span style="font-size:16px">Change Username, Password or Both of Account</span><br>
+		New Username: <input type="text" name="username"/><br/>
+		New Password: <input type="text" name="password"/><br/>
+		<% session.setAttribute("usrr", editUser); %>
+		<input type="submit" name="Update" value="Update"/>
+	</form>
+	
+	<br>
+	<form action="deleteUser.jsp">
+		<span style="font-size:16px">Delete Account</span><br>
+		<input type="hidden" name="user" value="<%=editUser%>"/>
+		<input type="submit" value="Delete User"/>
 	</form>
 	
 	<br>
 	<form action="deleteAuction.jsp">	
-	<span style="font-size:16px">Enter Auction # to Delete</span><br>
-	<input type="text" id="aucId" name="aucId">
-	<input type="submit" name="Delete" value="Delete"/>
+		<span style="font-size:16px">Enter Auction # to Delete</span><br>
+		<input type="text" id="aucId" name="aucId">
+		<input type="submit" name="Delete" value="Delete"/>
 	</form>
 	
 	
@@ -114,9 +121,9 @@
 	<% 
 	
 	Statement bid_st = con.createStatement();
-	String query = "SELECT a.auctionId, a.itemName, b.amount, a.closeDateTime, b.upperLimit, b.increment" +
+	String query = "SELECT b.bidId, a.itemName, b.amount, a.closeDateTime, b.upperLimit, b.increment" +
 			" FROM Bids b, Auction a" +
-			" WHERE b.auctionId = a.auctionId AND bidId IN (SELECT MAX(bidId) FROM Bids WHERE username='" + session.getAttribute("user") + "' GROUP BY username, auctionId)";
+			" WHERE b.auctionId = a.auctionId AND bidId IN (SELECT MAX(bidId) FROM Bids WHERE username='" + editUser + "' GROUP BY username, auctionId)";
 	ResultSet yourBids = bid_st.executeQuery(query);
 	//select a.auctionId, a.itemName, b.amount, a.closeDateTime, b.upperLimit, b.increment
 	//from bids b, auction a
@@ -130,9 +137,9 @@
 	out.print("<span style='font-size: 18px;'>User Active Bids</span><br>");
 	out.println("<TR>");
 			
-	out.println("<TH>" + "Auction ID#" + "</TH>");
+	out.println("<TH>" + "Bid ID#" + "</TH>");
 	out.println("<TH>" + "Item Name" + "</TH>");
-	out.println("<TH>" + "Your bid" + "</TH>");
+	out.println("<TH>" + "User bid" + "</TH>");
 	out.println("<TH>" + "Highest bid" + "</TH>");
 	out.println("<TH>" + "Leading User" + "</TH>");
 	out.println("<TH>" + "Closing Date" + "</TH>");
@@ -150,10 +157,7 @@
 			for (int i = 0; i < colCount + 1; i++) { //this loop is super redundant lol
 				
 				if(i == 0){
-		    		//out.println("<TD>" + "<a href='displayAuction.jsp' data=>" + auctions.getString(i + 1) + "</a> " + "</TD>");
-		    		
-		    				out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
-		    				//TODO: SET LINK(S) TO DISPLAY AUCTION JSP WHEN MADE
+		    		out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
 		    	}else if(i == 1){
 		    		out.println("<TD>" + yourBids.getString(i + 1) + "</TD>");
 		    	}else if(i == 2){

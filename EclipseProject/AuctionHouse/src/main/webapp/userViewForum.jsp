@@ -20,7 +20,7 @@
 	<p>
 	<span style="font-size:18px">Post New Question</span></br>
 	<form action="submitQ.jsp">
-		<textarea id="questionText" name="questionText" rows="6" cols="70" maxlength="199">Ask a question to be answered by a sale representative.</textarea></br>
+		<textarea id="questionText" name="questionText" rows="6" cols="70" maxlength="199" placeholder="Ask a question to be answered by a sale representative."></textarea></br>
 		<input type="submit" value="Submit">
 	</form>
 	<p>

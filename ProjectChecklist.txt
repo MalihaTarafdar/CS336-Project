@@ -30,20 +30,20 @@ II. Browsing and advanced search functionality
 [] users search questions by keywords 
  
 III. Admin and customer rep functions 
-[] Admin (create an admin account ahead of time) 
-	[] creates accounts for customer representatives 
-	[] generates sales reports for: 
-		[] total earnings 
-		[] earnings per:
-			[] item
-			[] item type
-			[] end-user 
-		[] best-selling items 
-		[] best buyers 
- [] Customer representative functions: 
-	[] users post questions to the customer representatives (i.e. customer service) 
- 	[] reps reply to user questions 
- 	[] edits and deletes account information 
- 	[] removes bids  
- 	[] removes auctions  
+[x] Admin (create an admin account ahead of time) 
+	[x] creates accounts for customer representatives 
+	[x] generates sales reports for: 
+		[x] total earnings 
+		[x] earnings per:
+			[x] item
+			[x] item type
+			[x] end-user 
+		[x] best-selling items 
+		[x] best buyers 
+[x] Customer representative functions: 
+	[x] users post questions to the customer representatives (i.e. customer service) 
+ 	[x] reps reply to user questions 
+ 	[x] edits and deletes account information 
+ 	[x] removes bids  
+ 	[x] removes auctions  
  

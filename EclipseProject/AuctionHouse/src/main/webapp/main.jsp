@@ -44,16 +44,16 @@
 	out.print("<a href='userViewForum.jsp'>Enter Forum</a><p></p>");
     
     Statement st = con.createStatement();
-	ResultSet unseenAlerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") +
+	ResultSet recentAlerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") +
 			"' AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now()");
     out.print("<span style='font-size: 18px;'>Recent Alerts</span> (within the last week)<br>");
-    if (unseenAlerts.next()) {
+    if (recentAlerts.next()) {
     	out.print("<table border=1>");
         do {
         	out.print("<tr><td>");
-        	out.print(unseenAlerts.getString(3));
+        	out.print(recentAlerts.getString(3));
         	out.print("</td></tr>");
-        } while (unseenAlerts.next());
+        } while (recentAlerts.next());
 	    out.print("</table>");
     } else {
     	out.print("No new alerts.<br>");
@@ -288,8 +288,11 @@
 	
 	%>
 	
-	<a href='deleteUser.jsp'>Delete Account</a>
-	<a href='logout.jsp'>Log out</a>
+	<form method="POST">
+		<input type="hidden" name="user" value="<%=session.getAttribute("user")%>"/>
+		<input type="submit" name="delete" formaction="deleteUser.jsp" value="Delete Account"/>
+		<input type="submit" name="logout" formaction="logout.jsp" value="Log Out"/>
+	</form>
 	<%
 	}
 	%>
