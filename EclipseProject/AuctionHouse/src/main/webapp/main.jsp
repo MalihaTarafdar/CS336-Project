@@ -235,49 +235,47 @@
 	boolean s = request.getParameter("search") != null;
 	boolean t = request.getParameter("sort") != null;
 	boolean o = request.getParameter("order") != null;
+		
+	//search term
+	String searchTerm = "";
+	if (s && !term.isEmpty()) {		
+		if (request.getParameter("search").equals("auctionId") || request.getParameter("search").equals("itemId")) { //serach in auctionId and itemId
+			searchTerm += request.getParameter("search") + " = " + term;
+		} else { //search in item name
+			searchTerm += "itemName LIKE '%" + term + "%'";
+		}
+	}
+	//price range
+	String priceRange = "";
+	if (!priceFrom.isEmpty() && !priceFrom.isEmpty()) {
+		String maxBid = "(SELECT MAX(amount) FROM Bids WHERE auctionId = a.auctionId)";
+		String maxBidNotNull = maxBid + " >= " + Float.parseFloat(priceFrom) + " AND " + maxBid + " <= " + Float.parseFloat(priceTo);
+		String maxBidNull = "initialPrice >= " + Float.parseFloat(priceFrom) + " AND " + "initialPrice <= " + Float.parseFloat(priceTo);
+		priceRange += "IF(" + maxBid + " IS NOT NULL, " + maxBidNotNull + ", " + maxBidNull + ")";
+	}
+	//date range
+	String dateRange = "";
+	if (!dateStart.isEmpty() && !dateEnd.isEmpty()) {
+		dateRange += "closeDateTime BETWEEN '" + dateStart + "' AND '" + dateEnd + "'";
+	}
 	
-	if (request.getParameter("term") != null) {		
-		//search term
-		String searchTerm = "";
-		if (s && !term.isEmpty()) {		
-			if (request.getParameter("search").equals("auctionId") || request.getParameter("search").equals("itemId")) { //serach in auctionId and itemId
-				searchTerm += request.getParameter("search") + " = " + term;
-			} else { //search in item name
-				searchTerm += "itemName LIKE '%" + term + "%'";
-			}
-		}
-		//price range
-		String priceRange = "";
-		if (!request.getParameter("priceFrom").isEmpty() && !request.getParameter("priceTo").isEmpty()) {
-			String maxBid = "(SELECT MAX(amount) FROM Bids WHERE auctionId = a.auctionId)";
-			String maxBidNotNull = maxBid + " >= " + Float.parseFloat(request.getParameter("priceFrom")) + " AND " + maxBid + " <= " + Float.parseFloat(request.getParameter("priceTo"));
-			String maxBidNull = "initialPrice >= " + Float.parseFloat(request.getParameter("priceFrom")) + " AND " + "initialPrice <= " + Float.parseFloat(request.getParameter("priceTo"));
-			priceRange += "IF(" + maxBid + " IS NOT NULL, " + maxBidNotNull + ", " + maxBidNull + ")";
-		}
-		//date range
-		String dateRange = "";
-		if (!request.getParameter("dateStart").isEmpty() && !request.getParameter("dateEnd").isEmpty()) {
-			dateRange += "closeDateTime BETWEEN '" + request.getParameter("dateStart") + "' AND '" + request.getParameter("dateEnd") + "'";
-		}
-		
-		//combine into WHERE
-		if (!searchTerm.isEmpty() || !priceRange.isEmpty() || !dateRange.isEmpty()) {
-			where += "WHERE ";
-		}
-		where += searchTerm;
-		if (!searchTerm.isEmpty() && (!priceRange.isEmpty() || !dateRange.isEmpty())) {
-			where += " AND ";
-		}
-		where += priceRange;
-		if (!priceRange.isEmpty() && !dateRange.isEmpty()) {
-			where += " AND ";
-		}
-		where += dateRange;
-		
-		//sort
-		if (request.getParameter("order") != null) {
-			orderBy = "ORDER BY " + request.getParameter("sort") + " " + request.getParameter("order");
-		}
+	//combine into WHERE
+	if (!searchTerm.isEmpty() || !priceRange.isEmpty() || !dateRange.isEmpty()) {
+		where += "WHERE ";
+	}
+	where += searchTerm;
+	if (!searchTerm.isEmpty() && (!priceRange.isEmpty() || !dateRange.isEmpty())) {
+		where += " AND ";
+	}
+	where += priceRange;
+	if (!priceRange.isEmpty() && !dateRange.isEmpty()) {
+		where += " AND ";
+	}
+	where += dateRange;
+	
+	//sort
+	if (request.getParameter("order") != null) {
+		orderBy = "ORDER BY " + request.getParameter("sort") + " " + request.getParameter("order");
 	}
 	
 	String query = select + " " + where + " " + orderBy;

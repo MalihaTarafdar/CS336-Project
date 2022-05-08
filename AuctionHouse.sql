@@ -94,13 +94,19 @@ CREATE TABLE IF NOT EXISTS `Posts` (
 	FOREIGN KEY(`employee`) references `Users`(`username`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `Interested` (
+    `username` varchar(50),
+    `itemId` int,
+    PRIMARY KEY(`username`, `itemId`),
+    FOREIGN KEY(`username`) references `Users`(`username`) ON DELETE CASCADE,
+	FOREIGN KEY(`itemId`) references `Electronics`(`itemId`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
 INSERT IGNORE INTO `Users` (`username`, `password`) VALUES ('admin', 'admin');
 /*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
-
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

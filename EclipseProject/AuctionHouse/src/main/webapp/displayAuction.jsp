@@ -175,6 +175,16 @@
 			<input type="submit" name="manualBid" value="Manual Bid"/>
 		</form>
 	<%
+	} else if (!isOwnAuction && isClosed) {
+	%>
+		This auction has closed.<br/>
+		<form method="POST" action="interested.jsp">
+			<input type="hidden" name="itemId" value="<%=itemId%>"/>
+			<input type="hidden" name="auctionId" value="<%=auctionId%>"/>
+			Notify me when the item becomes available:
+			<input type="submit" value="Notify"/>
+		</form>
+	<%
 	}
 	%>
 	<br/>

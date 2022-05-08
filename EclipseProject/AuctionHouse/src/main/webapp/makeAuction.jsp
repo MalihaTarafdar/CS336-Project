@@ -3,6 +3,7 @@
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.time.LocalDateTime" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,8 +12,6 @@
 </head>
 <body>
 	<%
-	
-	
 	Class.forName("com.mysql.jdbc.Driver");
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
@@ -44,7 +43,6 @@
     String storage = request.getParameter("storage");
     String chip = request.getParameter("chip");
     
-    //in mysql you can to field = null   :))))))))))) 
 
     if(sn == null){
     	sn = "IS NULL";
@@ -84,7 +82,7 @@
     }
         
     Statement doesItemExist = con.createStatement(); 
-	int itemID;
+	int itemId;
     boolean newItem = true;
 	ResultSet checkSet;
 	
@@ -185,7 +183,7 @@
     	}
     	
     if(checkSet.next()){
-    	 itemID =  Integer.parseInt(checkSet.getString(1));
+    	 itemId =  Integer.parseInt(checkSet.getString(1));
     	 newItem = false;
     }else{
     	Statement getItemID = con.createStatement();
@@ -195,12 +193,8 @@
 		   ResultSet item_rs2 = getItemID2.executeQuery("SELECT count(*) FROM Electronics");
 		   item_rs1.next();
 		   item_rs2.next();
-		   itemID = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemID for electronics query
+		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
     }
-
-    //int itemID;		
-    //if(matchingItem.next()){
-    //	itemID = matchingItem.getInt(1);
     
     }else{
     	
@@ -209,15 +203,14 @@
 		   Statement getItemID = con.createStatement();
 		   Statement getItemID2 = con.createStatement();
 		   ResultSet item_rs1 = getItemID.executeQuery("SELECT max(itemId) FROM Electronics");
-		   //ResultSet item_rs2 = getItemID.executeQuery("SELECT count(*) FROM Electronics");
 		   ResultSet item_rs2 = getItemID2.executeQuery("SELECT count(*) FROM Electronics");
 		   item_rs1.next();
 		   item_rs2.next();
-		   itemID = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemID for electronics query
+		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
     } 
     if(newItem){
 	    //TODO: clean up
-    	item_statement.setString(1, "" + itemID);
+    	item_statement.setString(1, "" + itemId);
 	    item_statement.setString(2, (request.getParameter("serialNum") != null && !request.getParameter("serialNum").isEmpty()) ? request.getParameter("serialNum") : "-1");
 	    item_statement.setString(3, (request.getParameter("brand") != null && !request.getParameter("brand").isEmpty()) ? request.getParameter("brand") : "not provided");
 	    item_statement.setString(4, (request.getParameter("model") != null && !request.getParameter("model").isEmpty()) ? request.getParameter("model") : "not provided");
@@ -238,10 +231,8 @@
     ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Auction");
     rs1.next();
     rs2.next();
-    int auctionID = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(auctionId)") + 1 : 1); //need for Sells
-    //pst.setString(1, "" + (rs2.getInt("count(*)") > 0 ? rs1.getInt("auctionId") + 1 : 1));
-    pst.setString(1, "" + auctionID);
-    //out.print(rs2.getInt("count(*)") > 0 ? rs1.getInt("auctionId") + 1 : 1);
+    int auctionId = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(auctionId)") + 1 : 1);
+    pst.setString(1, "" + auctionId);
     
     pst.setString(2, request.getParameter("itemName"));
     
@@ -249,22 +240,41 @@
 	pst.setString(4, request.getParameter("initialPrice"));
 	pst.setString(5, request.getParameter("bidIncrement"));
 	pst.setString(6, request.getParameter("closeDateTime"));
-	
-    //System.out.println(itemID);
-    //pst.setString(7, "" + (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("auctionId") + 1 : 1));
-    pst.setString(7, "" + itemID);
-    //System.out.println()
-	
+    pst.setInt(7, itemId);
 	pst.executeUpdate();
     
     
 	
    	//create relationship(sells) between user and auction
    	sell_statement.setString(1, userName);
-   	sell_statement.setString(2, "" + auctionID);
+   	sell_statement.setString(2, "" + auctionId);
    	sell_statement.executeUpdate();
 	
 	
+   	
+	//ALERTS FOR USERS INTERESTED
+	if (!newItem) {
+	   	Statement iSt = con.createStatement();
+		ResultSet interestedUsers = iSt.executeQuery("SELECT * FROM Interested WHERE itemId = " + itemId);
+	   	while (interestedUsers.next()) {
+			String iUser = interestedUsers.getString(1);
+	   		
+	   		PreparedStatement ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
+        	
+        	Statement maSt = con.createStatement();
+        	ResultSet maxAlertId = maSt.executeQuery("SELECT MAX(alertId) FROM Alerts");
+    		maxAlertId.next();
+    		int alertId = ((maxAlertId.getString(1) != null) ? maxAlertId.getInt(1) + 1 : 1);
+    		ps.setInt(1, alertId);
+    		
+    		ps.setString(2, iUser);
+    		ps.setString(3, "<a href='main.jsp?search=itemId&term=" + itemId + "'>Item " + itemId + "</a> is now available!");
+    		ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+    		ps.executeUpdate();
+	   	}
+	}
+   	
+   	
 	
 	response.sendRedirect("main.jsp");
 	%>
