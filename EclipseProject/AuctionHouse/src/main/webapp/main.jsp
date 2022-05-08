@@ -215,14 +215,69 @@
 	
 	//ALL ACTIVE AUCTIONS
 	
-	//search and sort
+	//SEARCH AND SORT
 	Statement aSt = con.createStatement();
 	
-	String select = "SELECT * FROM Auction";
-	String orderBy = (request.getParameter("order") != null) ?
-			"ORDER BY " + request.getParameter("sort") + " " + request.getParameter("order") : "";
+	String select = "SELECT * FROM Auction a";
+	String where = "";
+	String orderBy = "";
 	
-	String query = select + " " + orderBy;
+	String term = (request.getParameter("term") != null) ? request.getParameter("term") : "";
+	String priceFrom = (request.getParameter("priceFrom") != null) ? request.getParameter("priceFrom") : "";
+	String priceTo = (request.getParameter("priceTo") != null) ? request.getParameter("priceTo") : "";
+	String dateStart = (request.getParameter("dateStart") != null) ? request.getParameter("dateStart") : "";
+	String dateEnd = (request.getParameter("dateEnd") != null) ? request.getParameter("dateEnd") : "";
+	
+	boolean s = request.getParameter("search") != null;
+	boolean t = request.getParameter("sort") != null;
+	boolean o = request.getParameter("order") != null;
+	
+	if (request.getParameter("term") != null) {		
+		//search term
+		String searchTerm = "";
+		if (s && !term.isEmpty()) {		
+			if (request.getParameter("search").equals("auctionId") || request.getParameter("search").equals("itemId")) { //serach in auctionId and itemId
+				searchTerm += request.getParameter("search") + " = " + term;
+			} else { //search in item name
+				searchTerm += "itemName LIKE '%" + term + "%'";
+			}
+		}
+		//price range
+		String priceRange = "";
+		if (!request.getParameter("priceFrom").isEmpty() && !request.getParameter("priceTo").isEmpty()) {
+			String maxBid = "(SELECT MAX(amount) FROM Bids WHERE auctionId = a.auctionId)";
+			String maxBidNotNull = maxBid + " >= " + Float.parseFloat(request.getParameter("priceFrom")) + " AND " + maxBid + " <= " + Float.parseFloat(request.getParameter("priceTo"));
+			String maxBidNull = "initialPrice >= " + Float.parseFloat(request.getParameter("priceFrom")) + " AND " + "initialPrice <= " + Float.parseFloat(request.getParameter("priceTo"));
+			priceRange += "IF(" + maxBid + " IS NOT NULL, " + maxBidNotNull + ", " + maxBidNull + ")";
+		}
+		//date range
+		String dateRange = "";
+		if (!request.getParameter("dateStart").isEmpty() && !request.getParameter("dateEnd").isEmpty()) {
+			dateRange += "closeDateTime BETWEEN '" + request.getParameter("dateStart") + "' AND '" + request.getParameter("dateEnd") + "'";
+		}
+		
+		//combine into WHERE
+		if (!searchTerm.isEmpty() || !priceRange.isEmpty() || !dateRange.isEmpty()) {
+			where += "WHERE ";
+		}
+		where += searchTerm;
+		if (!searchTerm.isEmpty() && (!priceRange.isEmpty() || !dateRange.isEmpty())) {
+			where += " AND ";
+		}
+		where += priceRange;
+		if (!priceRange.isEmpty() && !dateRange.isEmpty()) {
+			where += " AND ";
+		}
+		where += dateRange;
+		
+		//sort
+		if (request.getParameter("order") != null) {
+			orderBy = "ORDER BY " + request.getParameter("sort") + " " + request.getParameter("order");
+		}
+	}
+	
+	String query = select + " " + where + " " + orderBy;
+	System.out.println(query);
 	ResultSet auctions = aSt.executeQuery(query);
 	
 	out.print("<p><table border=1>");
@@ -232,30 +287,27 @@
 	<form method="GET" action="main.jsp">
 		Search & Sort Options<br/>
 		Search term: 
-		<select name="searchTermBy">
-			<option value="name">Item Name</option>
-			<option value="details">Item Details</option>
+		<select name="search">
+			<option value="item" <%if (s && request.getParameter("search").equals("item")) out.print("selected");%>>Item Name</option>
+			<option value="auctionId" <%if (s && request.getParameter("search").equals("auctionId")) out.print("selected");%>>Auction ID</option>
+			<option value="itemId" <%if (s && request.getParameter("search").equals("itemId")) out.print("selected");%>>Item ID</option>
 		</select>
-		: <input type="text" name="searchTerm" placeholder="search term"/><br/>
-		Id: 
-		<select name="searchIdBy">
-			<option value="auctionId">Auction ID</option>
-			<option value="itemId">Item ID</option>
-		</select>
-		: <input type="text" name="searchId" placeholder="ID#"/><br/>
-		Price range: <input type="text" name="priceFrom" placeholder="from"/> - <input type="text" name="priceTo" placeholder="to"/><br/>
-		Date range: <input type="text" name="dateStart" placeholder="start"/> - <input type="text" name="dateEnd" placeholder="end"/><br/>
+		: <input type="text" name="term" placeholder="search term" value="<%=term%>"/><br/>
+		Price range: <input type="text" name="priceFrom" placeholder="from" value="<%=priceFrom%>"/> - 
+			<input type="text" name="priceTo" placeholder="to" value="<%=priceTo%>"/><br/>
+		Date range: <input style="width: 180px" type="text" name="dateStart" placeholder="YYYY-MM-DD hh:mm:ss" value="<%=dateStart%>"/> to
+			<input style="width: 180px" type="text" name="dateEnd" placeholder="YYYY-MM-DD hh:mm:ss" value="<%=dateEnd%>"/><br/>
 		Sort by 
 		<select name="sort">
-			<option value="auctionId">Auction ID</option>
-			<option value="itemId">Item ID</option>
-			<option value="itemName">Item Name</option>
-			<option value="initialPrice">Initial Price</option>
-			<option value="closeDateTime">Closing Date & Time</option>
+			<option value="auctionId" <%if (t && request.getParameter("sort").equals("auctionId")) out.print("selected");%>>Auction ID</option>
+			<option value="itemId" <%if (t && request.getParameter("sort").equals("itemId")) out.print("selected");%>>Item ID</option>
+			<option value="itemName" <%if (t && request.getParameter("sort").equals("itemName")) out.print("selected");%>>Item Name</option>
+			<option value="initialPrice" <%if (t && request.getParameter("sort").equals("initialPrice")) out.print("selected");%>>Initial Price</option>
+			<option value="closeDateTime" <%if (t && request.getParameter("sort").equals("closeDateTime")) out.print("selected");%>>Closing Date & Time</option>
 		</select> : 
 		<select name="order">
-			<option value="ASC">Ascending</option>
-			<option value="DESC">Descending</option>
+			<option value="ASC" <%if (o && request.getParameter("order").equals("ASC")) out.print("selected");%>>Ascending</option>
+			<option value="DESC" <%if (o && request.getParameter("order").equals("DESC")) out.print("selected");%>>Descending</option>
 		</select><br/>
 		<input type="submit" value="Submit"/>
 	</form><br/>
@@ -267,13 +319,14 @@
 	out.print("<th>Item Name</th>");
 	out.print("<th>Closing Date & Time</th>");
 	out.print("<th>Status</th>");
-	out.print("<th>Highest Bid</th>");
+	out.print("<th>Price</th>");
 	out.print("</tr>");
 	
 	while (auctions.next()) {
 		int auctionId = auctions.getInt(1);
 		int itemId = auctions.getInt(2);
 		String itemName = auctions.getString(3);
+		float initialPrice = auctions.getFloat(5);
 		Timestamp closeDateTime = auctions.getTimestamp(7);
 		
 		out.print("<td><a href='displayAuction.jsp?Id=" + auctionId + "'>" + auctionId + "</a></td>");
@@ -284,12 +337,12 @@
 		boolean isClosed = LocalDateTime.now().isAfter(closeDateTime.toLocalDateTime());
 		out.print("<td>" + (isClosed ? "CLOSED" : "OPEN") + "</td>");
 		
-		ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
+		ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId = ?");
 	  	ps.setInt(1, auctionId);
 	  	ResultSet maxBid = ps.executeQuery();
 	  	maxBid.next();
 	  	float maxBidAmount = maxBid.getFloat(1);
-	  	out.print("<td>" + ((maxBidAmount > 0) ? currencyFormat.format(maxBidAmount) : "NONE") + "</td>");
+	  	out.print("<td>" + ((maxBidAmount > 0) ? currencyFormat.format(maxBidAmount) : currencyFormat.format(initialPrice)) + "</td>");
 	  
 	  	out.print("</tr>");
 	}
