@@ -2,7 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +15,7 @@
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
         
-    DecimalFormat f = new DecimalFormat("#0.00");
+    NumberFormat f = NumberFormat.getCurrencyInstance();
     
     //total for all items in order
     //SELECT itemId, b.price FROM auction a LEFT JOIN buys b using(auctionId) where b.auctionId IS NULL) UNION (select e.itemId, SUM(b.price)  from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId) order by itemId;
@@ -23,17 +23,17 @@
     //all PC itemId
     //Statement getPC = con.createStatement(); 
     //ResultSet PCs = getPC.executeQuery("select itemId from electronics where screenSize IS NULL AND touchScreen IS NULL AND camera IS NULL AND storage IS NULL AND chip IS NULL");
-    String pcItems = "select itemId from electronics where screenSize IS NULL AND touchScreen IS NULL AND camera IS NULL AND storage IS NULL AND chip IS NULL";
+    String pcItems = "select itemId from electronics where type = 'PC'";
     		
     //all laptop/table itemId
     //Statement getLP = con.createStatement(); 
     //ResultSet laptop_tablets = getLP.executeQuery("select itemId from electronics where screenSize IS NOT NULL AND touchScreen IS NOT NULL AND camera IS NULL AND storage IS NULL AND chip IS NULL");
-    String lptItems = "select itemId from electronics where screenSize IS NOT NULL AND touchScreen IS NOT NULL AND camera IS NULL AND storage IS NULL AND chip IS NULL";
+    String lptItems = "select itemId from electronics where type = 'Laptop/Tablet'";
     
     //all phone itemId
     //Statement getSt = con.createStatement(); 
     //ResultSet electronics = getSt.executeQuery("select itemId from electronics where cpu IS NULL AND gpu IS NULL AND ram IS NULL");
-    String phoneItems = "select itemId from electronics where cpu IS NULL AND gpu IS NULL AND ram IS NULL";
+    String phoneItems = "select itemId from electronics where type = 'Phone'";
     
     //table of itemId and their SUM(prices)
     //Statement earningSt = con.createStatement(); 
@@ -72,7 +72,7 @@
 
   	priceTotal = totalOfType.executeQuery();
   	priceTotal.next();
-  	out.println("<TD>" + "$" + f.format(priceTotal.getFloat(1)) + "</TD>");
+  	out.println("<TD>" + f.format(priceTotal.getFloat(1)) + "</TD>");
   	out.println("</TR>");
   	
   	out.println("<TR>");
@@ -86,7 +86,7 @@
 
   	priceTotal = totalOfType.executeQuery();
   	priceTotal.next();
-  	out.println("<TD>" + "$" + f.format(priceTotal.getFloat(1)) + "</TD>");
+  	out.println("<TD>" + f.format(priceTotal.getFloat(1)) + "</TD>");
   	out.println("</TR>");
   	
   	out.println("<TR>");
@@ -100,17 +100,14 @@
 
   	priceTotal = totalOfType.executeQuery();
   	priceTotal.next();
-  	out.println("<TD>" + "$" + f.format(priceTotal.getFloat(1)) + "</TD>");
+  	out.println("<TD>" + f.format(priceTotal.getFloat(1)) + "</TD>");
   	out.println("</TR>");
   	
   	
   	out.println("</TABLE></P>");
-    
-  	
-
-
-
-%>
-<a href='admin.jsp'>Return</a>
+	%>
+	
+	
+	<a href='admin.jsp'>Return</a>
 </body>
 </html>

@@ -10,18 +10,14 @@
 </head>
 <body>
 	
-	<p>
-	<span style="font-size:24px">Administrator</span><br/>
+	<span style="font-size:24px">Administrator</span><br/><br/>
 	<span style="font-size:18px">Create Customer Representative Account</span><br/>
 	<form method="POST" action="loginRegister.jsp">
 		Username: <input type="text" name="username"/><br/>
     	Password: <input type="password" name="password"/><br/>
     	<button type="submit" formaction="createSalesRep.jsp">Create</button><br/>
-    </form>
-    </p>
-	<p>
-	
-	
+    </form><br/>
+
 	<form>
 		<span style="font-size:18px">Sales Reports:</span><br/>
 		<button type="submit" formaction="report_totalEarnings.jsp">Generate Total Earnings Report</button><br/>
@@ -30,14 +26,9 @@
 		<button type="submit" formaction="perUserReport.jsp">Generate Earnings per end-user</button><br/>
 		<button type="submit" formaction="bestSelling.jsp">Generate Best Selling Items Report</button><br/>
 		<button type="submit" formaction="bestBuyers.jsp">Generate Best Buyers Report</button><br/>
-		
-		
-	</form>
+	</form><br/>
 	
 	
-	</p>
-	<% //PreparedStatement item_statement = con.prepareStatement("INSERT INTO Electronics %>
-<a href='logout.jsp'>Log out</a>
-
+	<a href='logout.jsp'>Log out</a>
 </body>
 </html>

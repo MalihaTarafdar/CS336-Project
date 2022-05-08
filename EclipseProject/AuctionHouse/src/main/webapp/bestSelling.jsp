@@ -2,7 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,13 +10,12 @@
 <title>Best Selling Items</title>
 </head>
 <body>
-
-<%	
+	<%	
 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
         
-    DecimalFormat f = new DecimalFormat("#0.00");
+    NumberFormat f = NumberFormat.getCurrencyInstance();
     
     out.println("<P ALIGN='center'><TABLE BORDER=1>");
 	out.println("Earnings Per Item Report");
@@ -36,30 +35,20 @@
 	ResultSet earningsPerItem = earningSt.executeQuery("(SELECT itemId, b.price FROM auction a LEFT JOIN buys b using(auctionId) where b.auctionId IS NULL) UNION (select e.itemId, SUM(b.price)  from buys b, auction a, electronics e WHERE e.itemid = a.itemid AND a.auctionId = b.auctionId group by e.itemId) order by price DESC;");
     
 	
-	while(itemDetails.next()){
-		
-		
+	while (itemDetails.next()) {
 		out.println("<TR>");
 		out.println("<TD>" + itemDetails.getInt(1) + "</TD>");
 		out.println("<TD>" + itemDetails.getString(2) + "</TD>");
 		out.println("<TD>" + itemDetails.getString(3) + "</TD>");
-		
-		
-		if (earningsPerItem.next()) {			
-			out.println("<TD>" + "$" + f.format(earningsPerItem.getFloat(2)) + "</TD>");
-		} else {
-			out.println("<TD>$0.00</TD>");
-		}
-		
+		out.println("<TD>" + (earningsPerItem.next() ? f.format(earningsPerItem.getFloat(2)) : f.format(0)) + "</TD>");
 		out.println("</TR>");
 	}
     
 	
 	out.println("</TABLE></P>");
-	
-%>
+	%>
 
-<a href='admin.jsp'>Return</a>
+	<a href='admin.jsp'>Return</a>
 
 
 </body>

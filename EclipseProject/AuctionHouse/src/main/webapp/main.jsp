@@ -152,7 +152,7 @@
         
 	    out.print("</table>");
     } else {
-    	out.print("No new alerts.<br/>");
+    	out.print("<br/>No new alerts.<br/>");
     }
 	out.print("<a href='alerts.jsp'>Show all alerts</a>");
 	

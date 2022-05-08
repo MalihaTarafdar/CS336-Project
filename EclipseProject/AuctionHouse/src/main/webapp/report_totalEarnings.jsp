@@ -2,7 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,28 +12,25 @@
 <body>
 
 <%	Class.forName("com.mysql.jdbc.Driver");
-    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
+    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse", "root", "root");
+    
     Statement totalEarn = con.createStatement(); 
     ResultSet total = totalEarn.executeQuery("select SUM(price) FROM Buys");
     
-    DecimalFormat f = new DecimalFormat("#0.00");
+    NumberFormat f = NumberFormat.getCurrencyInstance();
     
-    out.println("<P ALIGN='center'><TABLE BORDER=1>");
-	out.println("Total Earnings Report");
-	out.println("<TR>");
-	out.println("<TH>" + "Total" + "</TH>");
-	out.println("</TR>");
-	total.next();
-	out.println("<TR>");
-	if(total.getString(1) != null){
-		out.println("<TD>" + "$" + f.format(Float.parseFloat(total.getString(1))) + "</TD>");
-	}else{
-		
-		out.println("<TD>" + "$0.00" + "</TD>");
-	}
+    out.print("<table border=1>");
+	out.print("Total Earnings Report");
+	out.print("<tr>");
+	out.print("<th>Total</th>");
+	out.print("</tr>");
 	
-	out.println("</TR>");
-	out.println("</TABLE></P>");
+	total.next();
+	
+	out.print("<tr>");
+	out.print("<td>" + f.format(total.getFloat(1)) + "</td>");
+	out.print("</tr>");
+	out.print("</table>");
 	
 %>
 

@@ -2,7 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +16,7 @@
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
         
-    DecimalFormat f = new DecimalFormat("#0.00");
+    NumberFormat f = NumberFormat.getCurrencyInstance();
     
     //buyers not sellers
     String qr = "select username, SUM(price) from (select s.username, s.auctionId, b.price from sells s LEFT JOIN buys b using(auctionId) where b.auctionId IS NOT NULL) as t1 group by username;";
@@ -33,11 +33,9 @@
     
 	while(userSells.next()){
 		out.println("<TR>");
-		out.println("<TH>" + userSells.getString(1) + "</TH>");
-		out.println("<TH>" + "$" + f.format(userSells.getFloat(2)) + "</TH>");
+		out.println("<td>" + userSells.getString(1) + "</td>");
+		out.println("<td>" + f.format(userSells.getFloat(2)) + "</td>");
 		out.println("</TR>");
-		
-		
 	}
 	
 	
