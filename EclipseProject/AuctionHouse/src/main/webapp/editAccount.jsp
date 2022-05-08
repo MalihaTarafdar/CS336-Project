@@ -12,20 +12,40 @@
 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse", "root", "root");
 	
-	String user = request.getParameter("user");
+	String user = request.getParameter("usr");
 	
 	PreparedStatement ps;
 	NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 'at' HH:mm:ss");
 	%>
 	<meta charset="ISO-8859-1">
-	<title>View Account | <%=user%></title>
+	<title>Edit Account Details | <%=user%></title>
 </head>
 <body>
-	<a href="main.jsp">Return to Main</a><br/>
-	<span style="font-size:24px"><%=user%>'s Account</span><br/>
-
-	<%
+	<span style="font-size:24px">Edit User</span><br/><p>
+	<form action="editUser.jsp">
+		<span style="font-size:16px">Change Username, Password or Both of Account</span><br/>
+		New Username: <input type="text" name="username"/><br/>
+		New Password: <input type="text" name="password"/><br/>
+		<% session.setAttribute("usrr", user); %>
+		<input type="submit" name="Update" value="Update"/>
+	</form><br/>
+	
+	<form action="deleteUser.jsp">
+		<span style="font-size:16px">Delete Account</span><br/>
+		<input type="hidden" name="user" value="<%=user%>"/>
+		<input type="submit" value="Delete User"/>
+	</form><br/>
+	
+	<form action="deleteAuction.jsp">	
+		<span style="font-size:16px">Enter Auction # to Delete</span><br/>
+		<input type="text" id="aucId" name="aucId">
+		<input type="submit" name="Delete" value="Delete"/>
+	</form>
+	
+	
+	
+	<% 
 	//USER AUCTIONS
 	
 	//get auctions created by user
@@ -78,11 +98,20 @@
 	  	out.print("</tr>");
 	}
 	out.print("</table></p>");
+	%> 
 	
 	
 	
+	<br/>
+	<form action="deleteBid.jsp">	
+		<span style="font-size:16px">Enter Bid # to Delete</span><br/>
+		<input type="text" id="bidId" name="bidId">
+		<input type="submit" name="Delete" value="Delete"/>
+	</form>
 	
 	
+	
+	<%
 	//USER ACTIVE BIDS
 	
 	Statement ubSt = con.createStatement();
@@ -136,5 +165,8 @@
 	}
 	out.print("</table></p>");
 	%>
+	
+	
+	<br/><a href='saleRep.jsp'>Return</a>
 </body>
 </html>

@@ -6,13 +6,12 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Edit User</title>
 </head>
 <body>
-
-<% 
+	<% 
 	Class.forName("com.mysql.jdbc.Driver");
-	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse", "root", "root");
 	
 	String editUser = request.getParameter("username");
 	String editPass = request.getParameter("password");
@@ -22,21 +21,19 @@
 	PreparedStatement passOnly = con.prepareStatement("UPDATE Users SET password = '" + editPass + "' WHERE username = '" + curUserEdit + "'");
 	PreparedStatement both = con.prepareStatement("UPDATE Users SET username = '" + editUser + "', password = '" + editPass + "' WHERE username = '" + curUserEdit + "'");
 	
-	if(editUser.equals(null)){
+	if (editUser.equals(null)) {
 		userOnly.executeUpdate();
 		curUserEdit = editUser;
-	}else if(editPass.equals(null)){
+	} else if (editPass.equals(null)) {
 		passOnly.executeUpdate();
-	}else{
+	} else {
 		curUserEdit = editUser;
 		both.executeUpdate();
 	}
 	
 	
-	
 	session.removeAttribute("usrr");
-	response.sendRedirect("viewAccount.jsp"); 
-%>
-
+	response.sendRedirect("editAccount.jsp"); 
+	%>
 </body>
 </html>

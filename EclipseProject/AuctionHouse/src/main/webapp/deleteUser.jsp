@@ -24,7 +24,7 @@
 		response.sendRedirect("index.jsp");
 	} else {
 		out.println("User account deleted successfully.");
-		out.print("<a href='viewAccount.jsp?usr=" + user + "'>Return</a>");
+		out.print("<a href='editAccount.jsp?usr=" + user + "'>Return</a>");
 	}
 	%>
 </body>

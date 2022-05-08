@@ -22,7 +22,7 @@
 	
 	%>
 	
-	<form action="viewAccount.jsp">
+	<form action="editAccount.jsp">
 	<span style="font-size:16px">Enter User To Edit</span><br>
 	<input type="text" id="usr" name = "usr"><br>
 	<input type="submit" value="Submit"><br>

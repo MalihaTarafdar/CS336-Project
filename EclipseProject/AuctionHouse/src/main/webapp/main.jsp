@@ -53,8 +53,14 @@
 			<input type="submit" value="Add Auction"/>
 		</form><br/>
 		
-		<span style='font-size: 18px;'>Post and View Questions</span><br/>
+		<span>Post and View Questions</span><br/>
 		<a href='userViewForum.jsp'>Enter Forum</a><p></p>
+
+		<form method="GET" action="viewAccount.jsp">
+			<span>Search for a User</span>: 
+			<input type="text" name="user" required/>
+			<input type="submit" value="Search"/>
+		</form><br/>
 
 	<%
 	//CHECK FOR NEW WINS
@@ -387,7 +393,7 @@
 		out.print("<tr>");
 		out.print("<td><a href='displayAuction.jsp?Id=" + auctionId + "'>" + auctionId + "</a></td>");
 		out.print("<td>" + itemName + "</td>");
-		out.print("<td>" + amount + "</td>");
+		out.print("<td>" + currencyFormat.format(amount) + "</td>");
 		
 		ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
 	  	ps.setInt(1, auctionId);

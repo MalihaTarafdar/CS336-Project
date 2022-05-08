@@ -23,7 +23,7 @@
 	PreparedStatement pst = con.prepareStatement(req);
 	pst.executeUpdate();
 	
-	response.sendRedirect("viewAccount.jsp");
+	response.sendRedirect("editAccount.jsp");
 %>
 
 
