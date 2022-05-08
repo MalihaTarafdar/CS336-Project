@@ -14,7 +14,7 @@ I. Auctions
 	[x] when the closing time has come, check if the seller has set a reserve 
 		[x] if yes: if the reserve is higher than the last bid none is the winner. 
 		[x] if no: whoever has the higher bid is the winner 
-			[] alert the winner that they won the auction 
+			[x] alert the winner that they won the auction 
 
 II. Browsing and advanced search functionality 
 [x] let people browse on the items and see the status of the current bidding 

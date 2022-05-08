@@ -33,19 +33,62 @@
 		</select>
 		<input type="submit" value="Add Auction"/>
 	</form><br>
+	
+	<span style='font-size: 18px;'>Post and View Questions</span><br>
+	<a href='userViewForum.jsp'>Enter Forum</a><p></p>
 				
 	<%
 	//TODO: alert auto bidders when upperLimit reached
     //TOOD: alert normal bidders when surpassed
-    //TODO: alert winner that they won
     //TODO: alert when item becomes available
     
-    out.print("<span style='font-size: 18px;'>Post and View Questions</span><br>");
-	out.print("<a href='userViewForum.jsp'>Enter Forum</a><p></p>");
+    PreparedStatement ps;
+    
+    //check for new wins
+    //out of auctions that the user has bid on, check if win
+    //send alert if not already sent
+    Statement stmt = con.createStatement();
+    ResultSet activeBids = stmt.executeQuery(
+    		"SELECT a.auctionId, a.minPrice, a.closeDateTime FROM Bids b, Auction a " +
+    		"WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE username='" + session.getAttribute("user") + "' GROUP BY username, auctionId) " +
+    		"AND b.auctionId = a.auctionId");
+    while (activeBids.next()) {
+    	ps = con.prepareStatement("SELECT username, amount FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=? AND amount>=?");
+    	ps.setInt(1, activeBids.getInt(1));
+    	ps.setInt(2, activeBids.getInt(1));
+    	ps.setFloat(3, activeBids.getFloat(2));
+    	ResultSet winner = ps.executeQuery();
+    	
+    	Timestamp closeTimestamp = activeBids.getTimestamp(3);
+    	boolean isClosed = LocalDateTime.now().isAfter(closeTimestamp.toLocalDateTime());
+    	
+    	String message = "You won <a href=''displayAuction.jsp?Id=" + activeBids.getInt(1) + "''>Auction " + activeBids.getInt(1) + "</a>!";
+    	Statement alertSt = con.createStatement();
+    	ResultSet winnerAlert = alertSt.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") + "' AND alert='" + message + "'");
+    	
+    	if (winner.next() && isClosed && !winnerAlert.next()) {
+    		ps = con.prepareStatement("INSERT INTO Alerts(alertId, username, alert, dateTime) VALUES (?,?,?,?)");
+        	
+        	Statement st1 = con.createStatement();
+        	Statement st2 = con.createStatement();
+        	ResultSet rs1 = st1.executeQuery("SELECT MAX(alertId) FROM Alerts");
+    		ResultSet rs2 = st2.executeQuery("SELECT count(*) FROM Alerts");
+    		rs1.next();
+    		rs2.next();
+    		int alertId = (rs2.getInt("count(*)") > 0 ? rs1.getInt("MAX(alertId)") + 1 : 1);
+    		ps.setString(1, "" + alertId);
+    		
+    		ps.setString(2, (String)session.getAttribute("user"));
+    		ps.setString(3, "You won <a href='displayAuction.jsp?Id=" + activeBids.getInt(1) + "'>Auction " + activeBids.getInt(1) + "</a>!");
+    		ps.setString(4, LocalDateTime.now().toString());
+    		ps.executeUpdate();
+    	}
+    }
+    
     
     Statement st = con.createStatement();
 	ResultSet recentAlerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") +
-			"' AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now()");
+			"' AND dateTime BETWEEN date_sub(now(), INTERVAL 1 WEEK) and now() ORDER BY dateTime DESC");
     out.print("<span style='font-size: 18px;'>Recent Alerts</span> (within the last week)<br>");
     if (recentAlerts.next()) {
     	out.print("<table border=1>");
@@ -101,7 +144,7 @@
 	    	
 	    }
 	  	int aucId = Integer.parseInt(auctions.getString(1));
-		PreparedStatement ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
+		ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
 	  	ps.setString(1, "" + aucId);
 	  	ResultSet maxBid = ps.executeQuery();
 	  	maxBid.next();
@@ -157,7 +200,7 @@
 			}
 		}
 		int aucId = Integer.parseInt(auctions.getString(1));
-		PreparedStatement ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
+		ps = con.prepareStatement("SELECT MAX(amount) FROM Bids WHERE auctionId=?");
 	  	ps.setString(1, "" + aucId);
 	  	ResultSet maxBid = ps.executeQuery();
 	  	maxBid.next();
@@ -225,7 +268,7 @@
 		    		out.println("<TD>" + "$" +  f.format(yourBids.getFloat(i + 1)) + "</TD>");
 		    	}else if(i == 3){
 		    		
-		    		PreparedStatement ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
+		    		ps = con.prepareStatement("SELECT amount, username FROM Bids WHERE amount = (SELECT MAX(amount) FROM Bids WHERE auctionId=?) AND auctionId=?");
 		    	  	ps.setString(1, "" + aucId);
 		    	  	ps.setString(2, "" + aucId);
 				  	ResultSet maxBid = ps.executeQuery();

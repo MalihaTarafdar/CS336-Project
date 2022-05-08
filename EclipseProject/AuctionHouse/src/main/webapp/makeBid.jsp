@@ -92,7 +92,8 @@
 	  	
 	  	//PreparedStatement does not allow parameters inside single quotes
 	  	Statement st = con.createStatement();
-	    ResultSet bids = st.executeQuery("SELECT * FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId + " AND NOT username='" + maxBid.getString(2) + "' GROUP BY USERNAME)");
+	    ResultSet bids = st.executeQuery(
+	    		"SELECT * FROM Bids WHERE bidId IN (SELECT MAX(bidId) FROM Bids WHERE auctionId=" + aucId + " AND NOT username='" + maxBid.getString(2) + "' GROUP BY USERNAME)");
 	    while (bids.next()) {
 	    	float aucBidIncrement = Float.parseFloat(auction.getString(6));
 	    	float bidsAmount = Float.parseFloat(bids.getString(1));
@@ -141,7 +142,7 @@
 		ps.setString(1, "" + alertId);
 		
 		ps.setString(2, user);
-		ps.setString(3, "Your bid on <a href='displayAuction.jsp?Id=" + aucId + "'>Auction " + aucId + "</a> has been automatically udpated. ");
+		ps.setString(3, "Your bid on <a href='displayAuction.jsp?Id=" + aucId + "'>Auction " + aucId + "</a> has been automatically udpated.");
 		ps.setString(4, LocalDateTime.now().toString());
 		ps.executeUpdate();
     }

@@ -43,7 +43,6 @@
   	ps.setString(1, "" + aucId);
   	ps.setString(2, "" + aucId);
   	ResultSet maxBid = ps.executeQuery();
-  	maxBid.next();
 	String curBid;
 	
 	if(maxBid.next()){
@@ -201,8 +200,8 @@
 	%>
 	
 	<%
-	//cannot bid on own auction
-	if (!isOwnAuction) {
+	//cannot bid on own auction or if closed
+	if (!isOwnAuction && !isClosed) {
 	%>
 		How to bid:
 		<ul>

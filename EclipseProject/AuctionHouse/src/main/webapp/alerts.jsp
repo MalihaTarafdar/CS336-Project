@@ -15,7 +15,7 @@
     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/AuctionHouse","root", "root");
     
     Statement st = con.createStatement();
-	ResultSet alerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") + "'");
+	ResultSet alerts = st.executeQuery("SELECT * FROM Alerts WHERE username='" + session.getAttribute("user") + "' ORDER BY dateTime DESC");
     out.print("<span style='font-size: 18px;'>Alerts</span><br>");
     if (alerts.next()) {
     	out.print("<table border=1>");
