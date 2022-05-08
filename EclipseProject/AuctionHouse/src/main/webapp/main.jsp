@@ -38,9 +38,11 @@
 	<%
 	} else {
 	%>
+		<span><a href='main.jsp'>AuctionHouse</a></span><br/>
 		<span>Welcome <%=session.getAttribute("user")%>!</span>
-		<br/>
+		<br/><br/>
 		
+		Create an auction:<br/>
 		<label for="electronic">Choose type of electronic:</label>
 		<form method="POST" action="addAuction.jsp">
 			<select name="electronic" id="type">
@@ -213,12 +215,52 @@
 	
 	//ALL ACTIVE AUCTIONS
 	
+	//search and sort
 	Statement aSt = con.createStatement();
-	ResultSet auctions = aSt.executeQuery("SELECT * FROM Auction");
+	
+	String select = "SELECT * FROM Auction";
+	String orderBy = (request.getParameter("order") != null) ?
+			"ORDER BY " + request.getParameter("sort") + " " + request.getParameter("order") : "";
+	
+	String query = select + " " + orderBy;
+	ResultSet auctions = aSt.executeQuery(query);
 	
 	out.print("<p><table border=1>");
 	out.print("<span>All Active Auctions</span><br/>");
+	%>
 	
+	<form method="GET" action="main.jsp">
+		Search & Sort Options<br/>
+		Search term: 
+		<select name="searchTermBy">
+			<option value="name">Item Name</option>
+			<option value="details">Item Details</option>
+		</select>
+		: <input type="text" name="searchTerm" placeholder="search term"/><br/>
+		Id: 
+		<select name="searchIdBy">
+			<option value="auctionId">Auction ID</option>
+			<option value="itemId">Item ID</option>
+		</select>
+		: <input type="text" name="searchId" placeholder="ID#"/><br/>
+		Price range: <input type="text" name="priceFrom" placeholder="from"/> - <input type="text" name="priceTo" placeholder="to"/><br/>
+		Date range: <input type="text" name="dateStart" placeholder="start"/> - <input type="text" name="dateEnd" placeholder="end"/><br/>
+		Sort by 
+		<select name="sort">
+			<option value="auctionId">Auction ID</option>
+			<option value="itemId">Item ID</option>
+			<option value="itemName">Item Name</option>
+			<option value="initialPrice">Initial Price</option>
+			<option value="closeDateTime">Closing Date & Time</option>
+		</select> : 
+		<select name="order">
+			<option value="ASC">Ascending</option>
+			<option value="DESC">Descending</option>
+		</select><br/>
+		<input type="submit" value="Submit"/>
+	</form><br/>
+	
+	<%
 	out.print("<tr>");
 	out.print("<th>Auction ID#</th>");
 	out.print("<th>Item ID#</th>");
