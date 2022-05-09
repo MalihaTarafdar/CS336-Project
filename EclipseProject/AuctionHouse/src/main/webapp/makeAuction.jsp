@@ -151,12 +151,14 @@
     							
     							if(checkSet.next() ){
     								if(touch.equals("IS NULL")){
-                            			checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen " + tsc + "");
+    									
+                            			checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = 0");
                         	    	}else{
-                        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = '" + tsc + "'");
+                        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = 1");
                         	    	}
     								
     								if(checkSet.next() ){
+    									System.out.println("reaches cam");
         								if(cam.equals("IS NULL")){
                                 			checkSet = doesItemExist.executeQuery(" select * from electronics where camera " + cam + "");
                             	    	}else{
@@ -164,6 +166,7 @@
                             	    	}
         								
         								if(checkSet.next() ){
+        									System.out.println("reaches storage");
             								if(storage.equals("IS NULL")){
                                     			checkSet = doesItemExist.executeQuery(" select * from electronics where storage " + storage + "");
                                 	    	}else{
@@ -187,6 +190,7 @@
     		}
     	}
     	
+    System.out.println(checkSet.getStatement());
     if(checkSet.next()){
     	 itemId =  Integer.parseInt(checkSet.getString(1));
     	 newItem = false;
@@ -199,7 +203,7 @@
 		   item_rs1.next();
 		   item_rs2.next();
 		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
-		   
+		  
     }
     
     }else{
