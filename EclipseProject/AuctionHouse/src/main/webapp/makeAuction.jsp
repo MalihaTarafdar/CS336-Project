@@ -70,7 +70,7 @@
     if(screenSize == null){
     	screenSize = "IS NULL";
     }
-    if(touch.equals("off")){
+    if(touch == null || touch.equals("off") ){
     	touch = "IS NULL";
     	tsc = false;
     }else{
@@ -199,6 +199,7 @@
 		   item_rs1.next();
 		   item_rs2.next();
 		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
+		   
     }
     
     }else{
@@ -212,6 +213,7 @@
 		   item_rs1.next();
 		   item_rs2.next();
 		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
+		   
     } 
     if(newItem){
 	    //TODO: clean up
