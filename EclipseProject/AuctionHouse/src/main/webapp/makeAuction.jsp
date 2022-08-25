@@ -32,7 +32,7 @@
     
     String sn = request.getParameter("serialNum");
     String bran = request.getParameter("brand");
-    String mod = request.getParameter("model");
+    String modo = request.getParameter("model");
     String year = request.getParameter("year");
     String cpu = request.getParameter("cpu");
     String gpu = request.getParameter("gpu");
@@ -45,152 +45,60 @@
     String storage = request.getParameter("storage");
     String chip = request.getParameter("chip");
     boolean tsc = false;
+	
 
-    if(sn == null){
-    	sn = "IS NULL";
+    
+   
+    if(sn == null ){
+    	sn = "not provided";
     }
     if(bran == null){
-    	bran = "IS NULL";
+    	bran = "not provided";
     }
-    if(mod == null){
-    	mod = "IS NULL";
+    if(modo == null){
+    	modo = "not provided";
     }
     if(year == null){
-    	year = "IS NULL";
+    	year = "-1";
     }
     if(cpu == null){
-    	cpu = "IS NULL";
+    	cpu = "not provided";
     }
     if(gpu == null){
-    	gpu = "IS NULL";
+    	gpu = "not provided";
     }
     if(ram == null){
-    	ram = "IS NULL";
+    	ram = "not provided";
     }
     if(screenSize == null){
-    	screenSize = "IS NULL";
+    	screenSize = "-1";
     }
     if(touch == null || touch.equals("off") ){
-    	touch = "IS NULL";
+    	touch = "0";
     	tsc = false;
     }else{
     	tsc = true;
     }
     if(cam == null){
-    	cam = "IS NULL";
+    	cam = "not provided";
     }
     if(storage == null){
-    	storage = "IS NULL";
+    	storage = "-1";
     }
     if(chip == null){
-    	chip = "IS NULL";
+    	chip = "not provided";
     }
-        
+    
+    
+    
     Statement doesItemExist = con.createStatement(); 
+
 	int itemId;
     boolean newItem = true;
 	ResultSet checkSet;
-	
-    if(sn.equals("IS NULL")){
-    	checkSet = doesItemExist.executeQuery(" select * from electronics where serialNumber " + sn + "");
-    }else{
-    	checkSet = doesItemExist.executeQuery(" select * from electronics where serialNumber = '" + sn + "'");
-    }
-    
-    
-    if(checkSet.next() ){
-    	if(bran.equals("IS NULL")){
-    		checkSet = doesItemExist.executeQuery(" select * from electronics where brand " + bran + "");
-    	}else{
-    		checkSet = doesItemExist.executeQuery(" select * from electronics where brand = '" + bran + "'");
-    	}
-    	
-    	if(checkSet.next() ){
-    		
-    		if(mod.equals("IS NULL")){
-    			checkSet = doesItemExist.executeQuery(" select * from electronics where model " + mod + "");
-	    	}else{
-	    		checkSet = doesItemExist.executeQuery(" select * from electronics where model = '" + mod + "'");
-	    	}
-    	
-    		if(checkSet.next() ){
-    			if(year.equals("IS NULL")){
-        			checkSet = doesItemExist.executeQuery(" select * from electronics where year " + year + "");
-    	    	}else{
-    	    		checkSet = doesItemExist.executeQuery(" select * from electronics where year = '" + year + "'");
-    	    	}
-    			
-    			if(checkSet.next() ){
-    				
-    				if(cpu.equals("IS NULL")){
-            			checkSet = doesItemExist.executeQuery(" select * from electronics where cpu " + cpu + "");
-        	    	}else{
-        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where cpu = '" + cpu + "'");
-        	    	}
-    				
-    				if(checkSet.next() ){
-    					if(gpu.equals("IS NULL")){
-                			checkSet = doesItemExist.executeQuery(" select * from electronics where gpu " + gpu + "");
-            	    	}else{
-            	    		checkSet = doesItemExist.executeQuery(" select * from electronics where gpu = '" + gpu + "'");
-            	    	}
-    					
-    					if(checkSet.next() ){
-    						if(ram.equals("IS NULL")){
-                    			checkSet = doesItemExist.executeQuery(" select * from electronics where ram " + ram + "");
-                	    	}else{
-                	    		checkSet = doesItemExist.executeQuery(" select * from electronics where ram = '" + ram + "'");
-                	    	}
-    						
-    						if(checkSet.next() ){
-    							if(screenSize.equals("IS NULL")){
-                        			checkSet = doesItemExist.executeQuery(" select * from electronics where screenSize " + screenSize + "");
-                    	    	}else{
-                    	    		checkSet = doesItemExist.executeQuery(" select * from electronics where screenSize = '" + screenSize + "'");
-                    	    	}
-    							
-    							if(checkSet.next() ){
-    								if(touch.equals("IS NULL")){
-    									
-                            			checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = 0");
-                        	    	}else{
-                        	    		checkSet = doesItemExist.executeQuery(" select * from electronics where touchScreen = 1");
-                        	    	}
-    								
-    								if(checkSet.next() ){
-    									System.out.println("reaches cam");
-        								if(cam.equals("IS NULL")){
-                                			checkSet = doesItemExist.executeQuery(" select * from electronics where camera " + cam + "");
-                            	    	}else{
-                            	    		checkSet = doesItemExist.executeQuery(" select * from electronics where camera = '" + cam + "'");
-                            	    	}
-        								
-        								if(checkSet.next() ){
-        									System.out.println("reaches storage");
-            								if(storage.equals("IS NULL")){
-                                    			checkSet = doesItemExist.executeQuery(" select * from electronics where storage " + storage + "");
-                                	    	}else{
-                                	    		checkSet = doesItemExist.executeQuery(" select * from electronics where storage = '" + storage + "'");
-                                	    	}
-            								
-            								if(checkSet.next() ){
-                								if(chip.equals("IS NULL")){
-                                        			checkSet = doesItemExist.executeQuery(" select * from electronics where chip " + chip + "");
-                                    	    	}else{
-                                    	    		checkSet = doesItemExist.executeQuery(" select * from electronics where chip = '" + chip + "'");
-                                    	    	}
-            								}		
-        								}		
-    								}	
-    							}	
-    						}
-    					} 					
-    				}	
-    			}	
-    		}
-    	}
-    	
-    System.out.println(checkSet.getStatement());
+	checkSet = doesItemExist.executeQuery(" select * from electronics where serialNumber = '" + sn + "' and brand = '" + bran + "' and model = '" + modo + "' and year = '" + year + "' and cpu = '" + cpu + "' and gpu = '" + gpu + "' and ram = '" + ram + "' and screenSize = '" + screenSize + "' and touchScreen = '" + tsc + "' and camera = '" + cam + "' and storage = '" + storage + "' and chip = '" + chip +"';");
+
+
     if(checkSet.next()){
     	 itemId =  Integer.parseInt(checkSet.getString(1));
     	 newItem = false;
@@ -205,20 +113,7 @@
 		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
 		  
     }
-    
-    }else{
-    	
-    
-    
-		   Statement getItemID = con.createStatement();
-		   Statement getItemID2 = con.createStatement();
-		   ResultSet item_rs1 = getItemID.executeQuery("SELECT max(itemId) FROM Electronics");
-		   ResultSet item_rs2 = getItemID2.executeQuery("SELECT count(*) FROM Electronics");
-		   item_rs1.next();
-		   item_rs2.next();
-		   itemId = (item_rs2.getInt("count(*)") > 0 ? item_rs1.getInt("MAX(itemId)") + 1 : 1); //save itemId for electronics query
-		   
-    } 
+
     if(newItem){
 	    //TODO: clean up
     	item_statement.setInt(1, itemId);
